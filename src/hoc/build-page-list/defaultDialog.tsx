@@ -23,10 +23,10 @@ import CloseIcon from '@mui/icons-material/Close'
 import { Intl } from '../../utils'
 
 // Styles
-import { sxCloseDialogButton } from './sx'
+import { sxCloseDialogButton, sxDialogPrint } from './sx'
 
 // Interface
-import { SxProps } from '@mui/system'
+import { SxProps, Theme } from '@mui/system'
 
 // #region
 export interface SelectedItemProps {
@@ -191,7 +191,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
       fullScreen={fullScreen}
       onClose={onClose}
       open
-      sx={{ ...dialogProps?.sx }}
+      sx={{ ...sxDialogPrint, ...dialogProps?.sx, border: '1px solid' } as SxProps<Theme>}
     >
       <DialogTitle id='default-dialog-title' sx={{ '@media print': { display: 'none' } }}>
         {renderDialogTitle}
@@ -200,7 +200,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
         </IconButton>
       </DialogTitle>
 
-      <DialogContent dividers sx={{ '@media print': { overflow: 'hidden' } }}>
+      <DialogContent sx={{ '@media print': { overflow: 'hidden', margin: '0 !important', padding: '0 !important' } }}>
         {renderContent}
       </DialogContent>
     </Dialog>
