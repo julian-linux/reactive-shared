@@ -46,7 +46,8 @@ export interface DialogOptionProps {
   disabled?: boolean | ((selectedItem: SelectedItemProps) => boolean)
   shouldRender?: (selectedItem: SelectedItemProps) => boolean
   dialogTitle?: string | ((selectedItem: SelectedItemProps) => string)
-  fullScreen?: boolean
+  fullScreen?: boolean,
+  onClick?: (selectedItem: SelectedItemProps) => void
 }
 
 export interface DialogOptionsProps {
@@ -59,7 +60,7 @@ interface DefaultDialogProps {
   options: DialogOptionsProps
   selectedItem: SelectedItemProps
   dialogFullScreen: boolean
-  dialogProps?: { sx?: SxProps } 
+  dialogProps?: { sx?: SxProps }
 }
 
 // type ActionToConfirmProps = ((selectedItem: any) => void) | undefined
@@ -73,7 +74,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
   const [showRender, setShowRender] = useState('renderOptionList')
   const [selectedOption, setSelectedOption] = useState('')
   const actionToConfirm = useRef<any>()
-  
+
   const fullScreen = dialogFullScreen || options?.[selectedOption]?.fullScreen || false
 
   const handleClick = useCallback<HandleClickProps>(({ to, onConfirm, Component }, key) => () => {
@@ -111,8 +112,16 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
 
           if (!shouldRender) return null
 
+          const onClick = () => {
+            if (typeof option.onClick === 'function') {
+              option.onClick(selectedItem)
+            } else {
+              handleClick(option, key)()
+            }
+          }
+
           return (
-            <ListItemButton key={key} divider onClick={handleClick(option, key)} disabled={disabled}>
+            <ListItemButton key={key} divider onClick={onClick} disabled={disabled}>
               <ListItemAvatar>{option.icon}</ListItemAvatar>
               <ListItemText primary={option.text} />
             </ListItemButton>
@@ -127,14 +136,11 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
     return (
       <Box sx={{ p: 2 }}>
         <Box sx={{ mb: 5 }}>
-          <Intl langKey='GENERAL.CONFIRM_ACTION' variant='h6' color='secondary' />
+          <Intl langKey='GENERAL.CONFIRM_ACTION' variant='h6' />
         </Box>
 
         <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
           <Button
-            variant='contained'
-            color='secondary'
-            size='large'
             onClick={() => setShowRender('renderOptionList')}
           >
             <Intl langKey='GENERAL.BACK' />
@@ -142,8 +148,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
 
           <Button
             variant='contained'
-            color='primary'
-            size='large'
+            color='secondary'
             onClick={handleConfirmClick}
           >
             <Intl langKey='GENERAL.CONFIRM' />

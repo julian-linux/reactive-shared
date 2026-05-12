@@ -27,11 +27,11 @@ interface ButtonAppBarProps {
 }
 
 const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
+  const [isMenuOpen, setOpenMenu] = useState(false)
   const { pageTitle } = useAppContext()
   const { menuItems } = mainAppHook()
-  const [isMenuOpen, setOpenMenu] = useState(false)
 
-  const handleClick = useCallback(() => setOpenMenu(!isMenuOpen), [isMenuOpen])
+  const handleClick = () => setOpenMenu(open => !open)
 
   return (
     <>
@@ -41,7 +41,7 @@ const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
             <img src={logo} alt='logo' />
           </Link>
 
-          <Typography sx={{ flexGrow: 1 }} color='secondary' variant='h6'>
+          <Typography sx={{ flexGrow: 1 }} variant='h6'>
             {pageTitle}
           </Typography>
 

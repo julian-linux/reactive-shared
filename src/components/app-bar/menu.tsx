@@ -40,7 +40,7 @@ const Menu: React.FC<MenuProps> = ({ isMenuOpen, onCloseMenu, menuItems }) => {
   const renderMenuItems = useMemo(() => {
     const subheader = (
       <ListSubheader sx={sxSubHeader}>
-        <Intl langKey='MENU.WELCOME' variant='h6' paragraph style={{ marginTop: '16px' }} />
+        <Intl langKey='MENU.WELCOME' variant='h6' style={{ marginTop: '16px' }} color='secondary' />
       </ListSubheader>
     )
 

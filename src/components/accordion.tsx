@@ -33,6 +33,7 @@ const SharedAccordionComponent: React.FC<SharedAccordionProps> = props => {
           {...props}
         >
           <AccordionSummary
+            slotProps={{ transition: { unmountOnExit: true } }}
             aria-controls={`panel${itemIdx}a-content`}
             expandIcon={<ExpandMoreIcon />}
             id={`panel${itemIdx}a-header`}

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   UseMutateFunction,
@@ -19,10 +19,10 @@ import Paper from '@mui/material/Paper'
 import { useAppContext } from './hooks'
 
 // Shared
-import { CreateForm, BuildFormProps, InputsFormConfigProps  } from '../components/form'
-import {  Loading } from '../components/loading'
+import { CreateForm, BuildFormProps, InputsFormConfigProps } from '../components/form'
+import { Loading } from '../components/loading'
 import { HookResultProps } from '../utils/endpoints'
-import {  onlyText } from '../utils/intl'
+import { onlyText } from '../utils/intl'
 
 // #region
 // Interfaces
@@ -85,7 +85,9 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
   }
 }) => {
   const { setPageTitle, setSnackBarMessage } = useAppContext()
-  const { id = '' } = useParams()
+  let { id = '' } = useParams()
+  id = id || useQueryParams?.id || ''
+
   const [newId] = useState(removeIdFromForm ? '' : id)
 
   const afterQueryCalled = useRef(false)
@@ -112,12 +114,13 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
   }, [beforeMutate, mutate])
 
   const errors = useMemo(() => {
-    if (mutateData?.status === 'error') {
-      return mutateData?.errors
+    if (!!error) {
+      const errors = JSON.parse(error?.message || "{}")
+      return errors?.errors || {}
     }
 
     return {}
-  }, [mutateData])
+  }, [error])
 
   /** set data for form */
   const formData = useMemo<InputsFormConfigProps>(() => {

@@ -73,7 +73,7 @@ type UseCreateApiProps = (endpoint: string, additionalEndpoints?: AdditionalEndp
 
 type UseCustomQueryProps = (name: string, endpoint: string) => (queryParams: { id?: string, params?: ObjectStringProps }, options: ObjectStringProps) => any
 
-type UseCustomMutateProps = (endpoint: string) => (id: string | null, options: UseMutateOptionsProps& {params?: ObjectStringProps}, config?: ObjectStringProps) => any
+type UseCustomMutateProps = (endpoint: string) => (id: string | null, options: UseMutateOptionsProps & { params?: ObjectStringProps }, config?: ObjectStringProps) => any
 
 type OnSuccessMutateProps = (client: QueryClient, queries: string[][]) => (args: { status: string }) => void
 // #endregion
@@ -88,7 +88,7 @@ export const useInvalidateQueries = (queries: string[][]) => {
       })
     } catch (error) {
       console.error('Error invalidating queries:', error)
-      
+
     }
   }
 
@@ -116,9 +116,14 @@ const useCustomQuery: UseCustomQueryProps = (name, endpoint) => (queryParams = {
 }
 
 const useCustomMutation: UseCustomMutateProps = (endpoint) => (id: string | null, options = {}, config = {}) => {
+  if (endpoint.includes('{id}') && !id) {
+    throw new Error(`Endpoint ${endpoint} requires an id in hook implementation, but id is null`)
+  }
+
   const { refetchQueries = [], onSuccess, params = {} } = options
 
   const onSuccessMutation = onSuccessMutate(useQueryClient(), [[endpoint], ...refetchQueries])
+
   return useMutation({
     mutationFn: (formData) => {
       let data = formData
@@ -128,7 +133,7 @@ const useCustomMutation: UseCustomMutateProps = (endpoint) => (id: string | null
         delete formData.formData
         paramsOptions = formData
       }
-      
+
       if (id) {
         if (endpoint.includes('{id}')) {
           const newEndpoint = endpoint.replace('{id}', id)

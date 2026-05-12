@@ -50,9 +50,9 @@ export interface BuildFormProps {
   confirmButtonLangkey?: string
   inputsFormConfig: InputsFormConfigProps
   responseErrors?: { [key: string]: string }
-  onSubmit?: (formData: {[key: string]: any}) => any
+  onSubmit?: (formData: { [key: string]: any }) => any
   defaultSuccessMessage?: boolean,
-  formBoxProps?: {[key: string]: any}
+  formBoxProps?: { [key: string]: any }
 }
 
 // #endregion
@@ -173,8 +173,8 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Button onClick={closeDialog} variant='contained' color='error'><Intl langKey='GENERAL.CANCEL' /></Button>
-          <Button onClick={confirmDialog} variant='contained'><Intl langKey='GENERAL.ACCEPT' /></Button>
+          <Button onClick={closeDialog}><Intl langKey='GENERAL.CANCEL' /></Button>
+          <Button onClick={confirmDialog} variant='contained'><Intl langKey='GENERAL.ACCEPT' color='secondary' /></Button>
         </DialogActions>
       </Dialog>
     )
@@ -188,11 +188,10 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
         <Button
           disabled={loading}
           variant='contained'
-          color='secondary'
           onClick={handleBackAction}
           disableElevation
         >
-          <Intl langKey='GENERAL.BACK' />
+          <Intl langKey='GENERAL.BACK' color='secondary' />
         </Button>
       </Box>
     )
@@ -227,7 +226,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
       >
         {backButton}
         <Button
-          color='primary'
+
           disableElevation
           disabled={loading || disabled}
           type='submit'
@@ -239,7 +238,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
               size={20}
             />}
 
-          <Intl langKey={confirmButtonLangkey} />
+          <Intl langKey={confirmButtonLangkey} color='secondary' />
         </Button>
       </Box>
       {RenderDialogBack}
