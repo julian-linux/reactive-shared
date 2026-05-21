@@ -27,6 +27,23 @@ interface AmountComponentProps {
 const AmountComponent: React.FC<AmountComponentProps> = ({ disabled = false, onPlus, onMinus, maxValue = Number.MAX_SAFE_INTEGER, minValue = 0, initialValue = 0, value: parentValue, textWidth = '40%' }) => {
   const [amount, setAmount] = useState(initialValue)
 
+  const normalizeAmount = useCallback((rawValue: number) => {
+    if (Number.isNaN(rawValue)) return minValue
+    return Math.min(maxValue, Math.max(minValue, rawValue))
+  }, [maxValue, minValue])
+
+  const handleAmountChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
+    const parsedValue = normalizeAmount(Number(event.target.value))
+
+    if (parentValue !== undefined) {
+      onPlus(parsedValue)
+      return undefined
+    }
+
+    setAmount(parsedValue)
+    onPlus(parsedValue)
+  }, [normalizeAmount, onPlus, parentValue])
+
   const handlePlus = useCallback(() => {
     if (parentValue !== undefined) {
       if (parentValue < maxValue) {
@@ -53,13 +70,13 @@ const AmountComponent: React.FC<AmountComponentProps> = ({ disabled = false, onP
     }
 
     setAmount(value => {
-      if (amount > minValue) {
+      if (value > minValue) {
         value = value - 1
         onMinus(value)
       }
       return value
     })
-  }, [onMinus, amount, minValue, parentValue])
+  }, [onMinus, minValue, parentValue])
 
   useEffect(() => {
     setAmount(initialValue)
@@ -88,7 +105,10 @@ const AmountComponent: React.FC<AmountComponentProps> = ({ disabled = false, onP
         label={onlyText('FORM.LABEL.AMOUNT')}
         variant="outlined"
         value={amount}
-        disabled
+        onChange={handleAmountChange}
+        disabled={disabled}
+        type='number'
+        inputProps={{ min: minValue, max: maxValue }}
         size='small'
       />
 

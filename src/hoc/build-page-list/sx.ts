@@ -9,19 +9,24 @@ export const sxCloseDialogButton: SxProps = {
 
 export const sxDialogPrint: SxProps = {
   '@media print': {
+    '& .MuiDialog-container': {
+      alignItems: 'flex-start !important'
+    },
     '& .MuiDialog-paper': {
       margin: '0 !important',
       padding: '0 !important',
       maxWidth: 'none !important',
       maxHeight: 'none !important',
-      width: '100% !important',
-      height: '100% !important',
+      width: 'auto !important',
+      height: 'auto !important',
       borderRadius: '0 !important',
-      boxShadow: 'none !important'
+      boxShadow: 'none !important',
+      overflow: 'visible !important'
     },
     '& .MuiDialogContent-root': {
       margin: '0 !important',
-      padding: '0 !important'
+      padding: '0 !important',
+      overflow: 'visible !important'
     },
     '& .MuiDialogTitle-root': {
       margin: '0 !important',

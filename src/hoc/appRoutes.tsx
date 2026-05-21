@@ -26,9 +26,9 @@ const logged = Boolean(getLocalStorageValue('token'))
 const AppRoutesContainer: React.FC<AppRoutesProps> = ({ logo, MainAppProvider, UserEntity, routes, mainAppHook }) => {
   return (
     <Router future={{
-        v7_startTransition: true,
-        v7_relativeSplatPath: true
-      }}>
+      v7_startTransition: true,
+      v7_relativeSplatPath: true
+    }}>
       <MainAppProvider>
         {Boolean(logged) && <AppBar mainAppHook={mainAppHook} logo={logo} />}
         <Box sx={{ mt: logged ? 8 : 0 }}>
