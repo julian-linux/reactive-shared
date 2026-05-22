@@ -5,18 +5,36 @@ import isEqual from 'lodash/isEqual'
 // Material Components
 import InputLabel from '@mui/material/InputLabel'
 import MenuItem from '@mui/material/MenuItem'
+import ListSubheader from '@mui/material/ListSubheader'
 import FormControl from '@mui/material/FormControl'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
 import FormHelperText from '@mui/material/FormHelperText'
 
 // Shared
-import { BuildInputProps } from './sharedTypes'
+import { BuildInputProps, ItemOption, GroupedItems } from './sharedTypes'
 import { onlyText, usePreviousValue, useLabel } from '../../utils'
 
 type SelectProps = BuildInputProps & {
   inputProps: {
-    native? :boolean
+    native?: boolean
+
   }
+}
+
+const isItemOption = (item: any): item is ItemOption => {
+  if (item == null || typeof item !== 'object') return false
+
+  const hasValidLabel = typeof item.label === 'string' || typeof item.label === 'function'
+  const hasValidValue = typeof item.value === 'string' || typeof item.value === 'number'
+  const hasValidDisabled = item.disabled === undefined || typeof item.disabled === 'boolean'
+
+  return hasValidLabel && hasValidValue && hasValidDisabled
+}
+
+const isGroupedItems = (items: any): items is GroupedItems => {
+  if (items == null || typeof items !== 'object' || Array.isArray(items)) return false
+
+  return Object.values(items).every((group) => Array.isArray(group) && group.every(isItemOption))
 }
 
 export const SharedSelect: React.FC<SelectProps> = ({
@@ -57,26 +75,70 @@ export const SharedSelect: React.FC<SelectProps> = ({
   }, [onChangeField, onChange])
 
   const renderOptions = useMemo(() => {
-    return items.map(({ label, value, disabled = false }) => {
-      const renderLabel = typeof label === 'function' ? label() : label
+    if (Array.isArray(items)) {
+      return items.map(({ label, value, disabled = false }) => {
+        const renderLabel = typeof label === 'function' ? label() : label
 
-      if (native) return <option key={renderLabel} value={value} disabled={disabled}>{renderLabel}</option>
+        if (native) return <option key={renderLabel} value={value} disabled={disabled}>{renderLabel}</option>
 
-      return (
-        <MenuItem key={renderLabel} value={value} disabled={disabled}>{renderLabel}</MenuItem>
-      )
-    })
+        return (
+          <MenuItem key={renderLabel} value={value} disabled={disabled}>{renderLabel}</MenuItem>
+        )
+      })
+    }
+
+    if (isGroupedItems(items)) {
+      return Object.entries(items).flatMap(([groupName, groupItems]) => {
+        return [
+          (
+            <ListSubheader
+              key={`group-${groupName}`}
+              disableSticky
+              sx={{
+                color: 'text.disabled',
+                typography: 'body1',
+                px: 2,
+                py: 1,
+                minHeight: 48,
+                lineHeight: '1.5rem',
+                backgroundColor: 'secondary.dark',
+                fontStyle: 'italic',
+                pl: 3
+              }}
+            >
+              {groupName}
+            </ListSubheader>
+          ),
+          ...groupItems.map(({ label, value, disabled = false }) => {
+            const renderLabel = typeof label === 'function' ? label() : label
+
+            return (
+              <MenuItem key={`${groupName}-${renderLabel}`} value={value} disabled={disabled}>{renderLabel}</MenuItem>
+            )
+          })
+        ]
+      })
+    }
+
+    return []
+
   }, [items, native])
 
-  const renderValue = useCallback((selected: any) => {
-    if (items.length === 0) return ''
+  const normalizedItems = useMemo<ItemOption[]>(() => {
+    if (Array.isArray(items)) return items
+    if (isGroupedItems(items)) return Object.values(items).flat()
+    return []
+  }, [items])
 
-    const item = items.find(({ value }) => value === selected)
+  const renderValue = useCallback((selected: any) => {
+    if (normalizedItems.length === 0) return ''
+
+    const item = normalizedItems.find(({ value }) => value === selected)
 
     if (item?.label === undefined) return ''
 
     return typeof item.label === 'function' ? item.label() : item.label
-  }, [items])
+  }, [normalizedItems])
 
   const renderHelpText = useMemo(() => {
     if (error != null) {
@@ -94,6 +156,8 @@ export const SharedSelect: React.FC<SelectProps> = ({
   const renderLabel = useLabel(label)
 
   const defaultSelect = onlyText('FORM.LABEL.DEFAULT_SELECT')
+  const safeFormControlSx = typeof formControlSx === 'object' && formControlSx !== null ? formControlSx : {}
+  const safeSize = size === 'small' || size === 'medium' ? size : 'medium'
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
@@ -103,7 +167,7 @@ export const SharedSelect: React.FC<SelectProps> = ({
   }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <FormControl fullWidth={fullWidth} error={Boolean(error)} required={required} sx={{ mt: 2, ...formControlSx }} size={size}>
+    <FormControl fullWidth={Boolean(fullWidth)} error={Boolean(error)} required={required} sx={{ mt: 2, ...safeFormControlSx }} size={safeSize}>
       <InputLabel sx={{ bgcolor: 'white', px: 1 }} id={`id-select-${renderLabel.toLowerCase()}`}>{renderLabel}</InputLabel>
       <Select
         {...field}

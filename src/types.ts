@@ -1,5 +1,6 @@
 export * from './components/types'
 export * from './components/form/types'
+export * from './components/form/sharedTypes'
 export * from './hoc/types'
 export * from './utils/types'
 export * from './index'

@@ -26,7 +26,8 @@ import DialogTitle from '@mui/material/DialogTitle'
 import { Intl, onlyText } from '../../utils'
 
 // Build Input
-import BuildInput, { InputProps, RenderProps } from './buildInput'
+import BuildInput from './buildInput'
+import { InputProps, RenderProps } from './sharedTypes'
 
 // #region
 // Interfaces
