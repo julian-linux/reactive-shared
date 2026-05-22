@@ -14,6 +14,9 @@ type HTMLTypeProps = 'file' | 'checkbox' | 'radio' | 'select' | 'selectMultiple'
 type SharedTypeProps = 'numberFormat' | 'divider' | 'datePicker' | 'dateTimePicker' | 'component'
 type TypeProps = HTMLTypeProps | SharedTypeProps
 
+export type ItemOption = { label: string | (() => string), value: string | number, disabled?: boolean }
+export type GroupedItems = { [key: string]: ItemOption[] }
+
 export interface InputProps {
   type: TypeProps
   name: string
@@ -33,7 +36,7 @@ export interface InputProps {
   multiple?: boolean
   required?: boolean
   rows?: number
-  items?: Array<{ label: string | (() => string), value: string | number, disabled?: boolean }>
+  items?: ItemOption[] | GroupedItems
   tooltip?: string
   component?: any
   onChange?: any
