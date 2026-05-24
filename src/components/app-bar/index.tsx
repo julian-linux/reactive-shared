@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 
 // Material Components
 import AppBar from '@mui/material/AppBar'
+import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
@@ -12,7 +13,6 @@ import MenuIcon from '@mui/icons-material/Menu'
 
 // Shared
 import { useAppContext } from '../../hoc/hooks'
-import { Link } from '../link'
 
 // Components
 import Menu from './menu'
@@ -32,14 +32,15 @@ const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
   const { menuItems } = mainAppHook()
 
   const handleClick = () => setOpenMenu(open => !open)
+  const handleReload = useCallback(() => window.location.reload(), [])
 
   return (
     <>
       <AppBar sx={sxAppBar} position='fixed'>
         <Toolbar>
-          <Link sx={sxLinkHome} to='/'>
+          <Button sx={sxLinkHome} type='button' onClick={handleReload}>
             <img src={logo} alt='logo' />
-          </Link>
+          </Button>
 
           <Typography sx={{ flexGrow: 1 }} variant='h6'>
             {pageTitle}

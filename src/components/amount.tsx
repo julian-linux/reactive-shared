@@ -107,8 +107,7 @@ const AmountComponent: React.FC<AmountComponentProps> = ({ disabled = false, onP
         value={amount}
         onChange={handleAmountChange}
         disabled={disabled}
-        type='number'
-        inputProps={{ min: minValue, max: maxValue }}
+        type='text'
         size='small'
       />
 

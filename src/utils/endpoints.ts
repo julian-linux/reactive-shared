@@ -124,6 +124,7 @@ const useCustomMutation: UseCustomMutateProps = (endpoint) => (id: string | null
 
   const onSuccessMutation = onSuccessMutate(useQueryClient(), [[endpoint], ...refetchQueries])
 
+
   return useMutation({
     mutationFn: (formData) => {
       let data = formData

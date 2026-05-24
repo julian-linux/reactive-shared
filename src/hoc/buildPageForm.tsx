@@ -57,6 +57,7 @@ export interface BuildPageFormProps {
   actions: ActionsProps
   removeIdFromForm?: boolean
   onBackAction?: () => void
+  fixedActionsBottom?: boolean
 }
 // #endregion
 
@@ -65,6 +66,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
   pageTitle = '',
   removeIdFromForm = false,
   onBackAction,
+  fixedActionsBottom = false,
   buildFormProps: {
     defaultSuccessMessage = true,
     noBackButton = false,
@@ -200,6 +202,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
           responseErrors={errors}
           onSubmit={handleSubmit}
           formBoxProps={formBoxProps}
+          fixedActionsBottom={fixedActionsBottom}
         />
       </Box>
     </Paper>
