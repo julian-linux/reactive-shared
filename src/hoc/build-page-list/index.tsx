@@ -70,29 +70,26 @@ import { SxProps } from '@mui/system'
  * ```
  */
 
-
-
-
 /**
  * Used for split content in tabs
  * tabsHeader: label for show in tabhead
  * filterTabs: array of fns for filter content in each tab. Each tab will
  * use the defined component
  */
-interface TabsProps {
+interface TabsProps<T extends SelectedItemProps = SelectedItemProps> {
   tabsHeader: string[]
-  filterTabs: Array<(data: any) => SelectedItemProps[]>
+  filterTabs: Array<(data: T[]) => SelectedItemProps[]>
 }
 
 interface SearchProps {
   key: string
 }
 
-type ItemComponentProps =
+type ItemComponentProps<T extends SelectedItemProps = SelectedItemProps> =
   NamedExoticComponent<any>
-  | ((props: { item: SelectedItemProps, onSelect: () => void, [key: string]: any, onClose: () => void }) => ReactElement)
+  | ((props: { item: T, onSelect: () => void, [key: string]: any, onClose: () => void }) => ReactElement)
 
-export interface BuildPageListProps {
+export interface BuildPageListProps<T extends SelectedItemProps = SelectedItemProps> {
   // useQuery: (options?: UseQueryOptions) => UseQueryResult
   useQuery: any
   /** add params to request */
@@ -109,21 +106,22 @@ export interface BuildPageListProps {
   /** translation string */
   pageTitle: string
   dialogOptions?: DialogOptionsProps
-  dialogProps?: SxProps
+  dialogProps?: { sx?: SxProps }
   dialogFullScreen?: boolean
   DialogComponent?: (props: { onClose: () => void, selectedItem: SelectedItemProps, title: string, dialogFullScreen: boolean }) => ReactElement
   loading?: boolean
-  ItemComponent: ItemComponentProps
+  ItemComponent: ItemComponentProps<T>
   itemComponentProps?: any
-  tabs?: TabsProps
+  tabs?: TabsProps<T>
   SearchComponent?: any,
   MiddleComponent?: any,
   search?: boolean,
   infiniteScroll?: boolean
+  sortFunction?: (data: T[]) => T[]
 }
 
 /** Component for Create Lists with commons functionalities */
-const BuildPageListComponent: React.FC<BuildPageListProps> = ({
+const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>({
   useQuery,
   useQueryParams,
   useQueryOptions = {},
@@ -141,8 +139,9 @@ const BuildPageListComponent: React.FC<BuildPageListProps> = ({
   MiddleComponent,
   SearchComponent,
   search = false,
-  infiniteScroll = false
-}) => {
+  infiniteScroll = false,
+  sortFunction
+}: BuildPageListProps<T>): ReactElement => {
   const { setPageTitle, setSnackBarMessage } = useAppContext()
 
   const [searchParams, setSearchParams] = useState<SearchProps>()
@@ -228,7 +227,7 @@ const BuildPageListComponent: React.FC<BuildPageListProps> = ({
   const renderList = useMemo(() => {
     if (queryData === undefined) return []
 
-    const { data } = queryData
+    const data = sortFunction?.(queryData.data as T[]) ?? queryData.data
 
     if (tabs != null) {
       const tabsBody = tabs.filterTabs.map((fn, idxTab) => {
@@ -270,7 +269,8 @@ const BuildPageListComponent: React.FC<BuildPageListProps> = ({
       itemComponentProps,
       handleSelectItem,
       tabs,
-      page
+      page,
+      sortFunction
     ]
   )
 
@@ -324,4 +324,4 @@ const BuildPageListComponent: React.FC<BuildPageListProps> = ({
   )
 }
 
-export const BuildPageList = React.memo(BuildPageListComponent)
+export const BuildPageList = React.memo(BuildPageListComponent) as typeof BuildPageListComponent

@@ -12,7 +12,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 
 // Shared
 import { BuildInputProps, ItemOption, GroupedItems } from './sharedTypes'
-import { onlyText, usePreviousValue, useLabel } from '../../utils'
+import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
 
 type SelectProps = BuildInputProps & {
   inputProps: {
@@ -77,7 +77,7 @@ export const SharedSelect: React.FC<SelectProps> = ({
   const renderOptions = useMemo(() => {
     if (Array.isArray(items)) {
       return items.map(({ label, value, disabled = false }) => {
-        const renderLabel = typeof label === 'function' ? label() : label
+        const renderLabel = getLabelText(label)
 
         if (native) return <option key={renderLabel} value={value} disabled={disabled}>{renderLabel}</option>
 
@@ -110,7 +110,7 @@ export const SharedSelect: React.FC<SelectProps> = ({
             </ListSubheader>
           ),
           ...groupItems.map(({ label, value, disabled = false }) => {
-            const renderLabel = typeof label === 'function' ? label() : label
+            const renderLabel = getLabelText(label)
 
             return (
               <MenuItem key={`${groupName}-${renderLabel}`} value={value} disabled={disabled}>{renderLabel}</MenuItem>
@@ -137,7 +137,7 @@ export const SharedSelect: React.FC<SelectProps> = ({
 
     if (item?.label === undefined) return ''
 
-    return typeof item.label === 'function' ? item.label() : item.label
+    return getLabelText(item.label)
   }, [normalizedItems])
 
   const renderHelpText = useMemo(() => {

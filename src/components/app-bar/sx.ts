@@ -22,6 +22,9 @@ export const sxAppBar: SxProps = {
 export const sxLinkHome: SxProps = {
   marginTop: '5px',
   marginRight: 2,
+  minWidth: 0,
+  padding: 0,
+  display: 'inline-flex',
   '& img': {
     width: '26px'
   }

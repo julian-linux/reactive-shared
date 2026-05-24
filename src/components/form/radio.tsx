@@ -11,7 +11,7 @@ import FormHelperText from '@mui/material/FormHelperText'
 
 // Shared
 import { BuildInputProps } from './sharedTypes'
-import { onlyText, usePreviousValue, useLabel } from '../../utils'
+import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
 
 const SharedRadio: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -47,7 +47,7 @@ const SharedRadio: React.FC<BuildInputProps> = ({
     if (items == null) return null
 
     return items.map(({ value, label }) => {
-      const renderLabel = typeof label === 'function' ? label() : onlyText(label)
+      const renderLabel = getLabelText(label)
       return (
         <FormControlLabel key={renderLabel} value={value} control={<Radio />} label={renderLabel} />
       )

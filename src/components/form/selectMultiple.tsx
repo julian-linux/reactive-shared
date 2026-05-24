@@ -14,7 +14,7 @@ import Chip from '@mui/material/Chip'
 
 // Shared
 import { BuildInputProps } from './sharedTypes'
-import { onlyText, usePreviousValue, useLabel } from '../../utils'
+import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
 
 const getValue = (fieldValue, value) => {
   if (typeof fieldValue === 'string') {
@@ -63,7 +63,7 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
   const renderOptions = useMemo(() => {
     return items.map(({ label, value }) => {
       const checked = inputValue.includes(value)
-      const renderLabel = typeof label === 'function' ? label() : label
+      const renderLabel = getLabelText(label)
 
       return (
         <MenuItem key={renderLabel} value={value}>
@@ -80,7 +80,7 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
         {items
           .filter(({ value }) => selected.includes(value))
           .map(({ label }: { label: string | (() => string) }) => {
-            const renderLabel = typeof label === 'function' ? label() : label
+            const renderLabel = getLabelText(label)
             return (
               <Chip key={renderLabel} label={renderLabel} />
             )

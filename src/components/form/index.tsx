@@ -47,6 +47,7 @@ export interface BuildFormProps {
   noBackButton?: boolean
   onBackAction?: () => void
   backTo?: string | null
+  fixedActionsBottom?: boolean
   disabled?: boolean
   confirmButtonLangkey?: string
   inputsFormConfig: InputsFormConfigProps
@@ -63,6 +64,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
   noBackButton = false,
   onBackAction,
   backTo = '',
+  fixedActionsBottom = false,
   disabled,
   confirmButtonLangkey = '',
   inputsFormConfig,
@@ -219,11 +221,28 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
         {buildForm}
       </Box>
 
+      {fixedActionsBottom && <Box sx={{ height: 104 }} />}
+
       <Box
-        display='flex'
-        justifyContent={noBackButton ? 'flex-end' : 'space-between'}
-        pb={4}
-        pt={6}
+        sx={{
+          display: 'flex',
+          justifyContent: noBackButton ? 'flex-end' : 'space-between',
+          pb: 4,
+          pt: 6,
+          ...(fixedActionsBottom
+            ? {
+              position: 'fixed',
+              left: 0,
+              right: 0,
+              bottom: 0,
+              px: 3,
+              bgcolor: 'background.paper',
+              zIndex: 1000,
+              borderTop: '1px solid',
+              borderColor: 'divider'
+            }
+            : {})
+        }}
       >
         {backButton}
         <Button
