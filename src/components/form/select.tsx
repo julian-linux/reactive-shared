@@ -98,12 +98,12 @@ export const SharedSelect: React.FC<SelectProps> = ({
                 color: 'text.disabled',
                 typography: 'body1',
                 px: 2,
-                py: 1,
-                minHeight: 48,
-                lineHeight: '1.5rem',
-                backgroundColor: 'secondary.dark',
+                py: 0,
+                backgroundColor: '#eeeeee',
                 fontStyle: 'italic',
-                pl: 3
+                pl: 3,
+                fontWeight: 'bold',
+                fontSize: '0.875rem',
               }}
             >
               {groupName}
