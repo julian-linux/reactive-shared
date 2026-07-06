@@ -4,14 +4,14 @@
   "description": "set of libraries for build apps based on lists and forms",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/julian-reactive/reactive-shared.git"
+    "url": "git+https://github.com/julian-linux/reactive-shared.git"
   },
   "author": "julian mosquera",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/julian-reactive/reactive-shared/issues"
+    "url": "https://github.com/julian-linux/reactive-shared/issues"
   },
-  "homepage": "https://github.com/julian-reactive/reactive-shared#readme",
+  "homepage": "https://github.com/julian-linux/reactive-shared#readme",
   "ts-standard": {
     "project": "./tsconfig.json",
     "ignore": [
