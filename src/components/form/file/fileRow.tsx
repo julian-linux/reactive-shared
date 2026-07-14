@@ -7,9 +7,10 @@ import { useQuery, useMutation } from '@tanstack/react-query'
 
 import FileAvatar from './avatar'
 import { isImageType } from './constants'
-import type { FileProp } from './sharedTypes'
 import { api } from '../../../utils/api'
 import { Loading } from '../../loading'
+
+import type { FileProp } from './sharedTypes'
 
 const fetchImageBlob = async (file: FileProp): Promise<string> => {
   const response = await api.get(`files/file/${file.id}`, {
