@@ -1,21 +1,22 @@
-import Box from '@mui/system/Box'
-import ListItem from '@mui/material/ListItem'
-import IconButton from '@mui/material/IconButton'
-
 import CloseIcon from '@mui/icons-material/Close'
+import IconButton from '@mui/material/IconButton'
+import ListItem from '@mui/material/ListItem'
+import Box from '@mui/system/Box'
 
 import FileAvatar from './avatar'
-import { FileProp } from './sharedTypes'
+
+import type { FileProp } from './sharedTypes'
+
 interface FilesForUploadProps {
-  files: (File | FileProp)[] 
+  files: (File | FileProp)[]
   onRemoveFile: (idx: number) => void
 }
 
 const FilesForUpload = ({ files, onRemoveFile }: FilesForUploadProps) => {
   return files.map((file, index) => (
     <ListItem sx={{ display: 'flex', alignItems: 'center' }} key={index}>
-      <Box mr={1}>
-          <FileAvatar file={file} />
+      <Box sx={{ mr: 1 }}>
+        <FileAvatar file={file} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
         {file.name}

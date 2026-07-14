@@ -1,18 +1,18 @@
-import React, { useCallback, useRef, useState, useEffect, SyntheticEvent } from 'react'
+import React, { useCallback, useRef, useState, useEffect } from 'react'
+import type { SyntheticEvent } from 'react'
+
+import MaterialAutocomplete from '@mui/material/Autocomplete'
+import type { AutocompleteChangeDetails, AutocompleteChangeReason, AutocompleteInputChangeReason } from '@mui/material/Autocomplete'
+import CircularProgress from '@mui/material/CircularProgress'
+import TextField from '@mui/material/TextField'
+
 import debounce from 'lodash/debounce'
 import get from 'lodash/get'
 import isEqual from 'lodash/isEqual'
 
-// Material
-import MaterialAutocomplete, { AutocompleteChangeDetails, AutocompleteChangeReason, AutocompleteInputChangeReason } from '@mui/material/Autocomplete'
-import TextField from '@mui/material/TextField'
-import CircularProgress from '@mui/material/CircularProgress'
-
-// Shared
 import { useLabel, usePreviousValue } from '../utils'
 
-// Interfaces
-export interface AutocompleteProps{
+export interface AutocompleteProps {
   freeSolo?: boolean
   startAdornment?: any
   getOptionLabel?: any
@@ -30,7 +30,7 @@ export interface AutocompleteProps{
   }
   renderProps?: any
   useFormProps?: any
-  sx?: {[k: string]: any}
+  sx?: { [k: string]: any }
   size?: 'small' | 'medium'
   displayField?: string
 }

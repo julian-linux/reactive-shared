@@ -1,42 +1,36 @@
-// Libraries
 import React, {
-  // Dispatch,
-  NamedExoticComponent,
-  ReactElement,
-  // SetStateAction,
   useCallback,
   useEffect,
   useMemo,
   useState
 } from 'react'
+import type {
+  NamedExoticComponent,
+  ReactElement
+} from 'react'
 
-import { Link } from 'react-router-dom'
-
-import map from 'lodash/map'
-import debounce from 'lodash/debounce'
-import merge from 'lodash/merge'
-
-// Material Components
-import Paper from '@mui/material/Paper'
+import AddIcon from '@mui/icons-material/Add'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import List from '@mui/material/List'
+import Paper from '@mui/material/Paper'
 import Textfield from '@mui/material/TextField'
+import type { SxProps } from '@mui/system'
 
-// Icons
-import AddIcon from '@mui/icons-material/Add'
+import { Link } from 'react-router-dom'
 
-// Shared
-import { onlyText } from '../../utils'
+import debounce from 'lodash/debounce'
+import map from 'lodash/map'
+import merge from 'lodash/merge'
+
+import DefaultDialog from './defaultDialog'
+import IScroll from './infiniteScroll'
 import { Loading, AppTabs } from '../../components'
+import { onlyText } from '../../utils'
 import { useAppContext } from '../hooks'
 
-// Components
-import DefaultDialog, { SelectedItemProps, DialogOptionsProps } from './defaultDialog'
-import IScroll from './infiniteScroll'
-import { SxProps } from '@mui/system'
+import type { SelectedItemProps, DialogOptionsProps } from './defaultDialog'
 
-// Interfaces
 /**
  * Object of options for show in dialog when a item is selected.
  *
@@ -216,13 +210,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
         />
       )
     }
-  }, [
-    selectedItem,
-    dialogOptions,
-    dialogFullScreen,
-    handleOnClose,
-    DialogComponent
-  ])
+  }, [selectedItem, dialogOptions, DialogComponent, dialogFullScreen, handleOnClose, dialogProps])
 
   const renderList = useMemo(() => {
     if (queryData === undefined) return []
@@ -263,15 +251,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
       />
     ))
   },
-    [
-      queryData,
-      ItemComponent,
-      itemComponentProps,
-      handleSelectItem,
-      tabs,
-      page,
-      sortFunction
-    ]
+    [queryData, ItemComponent, itemComponentProps, handleSelectItem, tabs, sortFunction]
   )
 
   const renderSearch = useMemo(() => {
@@ -286,7 +266,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
         />
       )
     }
-  }, [SearchComponent, search])
+  }, [SearchComponent, debouncedSearch, search])
 
   useEffect(() => {
     setPageTitle(onlyText(pageTitle))
@@ -311,7 +291,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
         {MiddleComponent && <MiddleComponent />}
         {!!tabs && renderList}
         {infiniteScroll && !tabs && (
-          <IScroll page={page} onNext={() => setPage((prev) => prev + 1)} items={renderList} />
+          <IScroll page={page} onNext={() => setPage((prev) => prev + 1)} items={renderList as ReactElement[]} />
         )}
         {!infiniteScroll && !tabs && (
           <List>

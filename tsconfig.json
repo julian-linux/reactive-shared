@@ -1,34 +1,31 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src",
-    "declaration": true,
-    "declarationDir": "dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true,
-    "jsx": "react-jsx",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
-    "module": "ESNext",
-    "moduleResolution": "node",
-    "noEmit": false,
-    "emitDeclarationOnly": true,
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitReturns": false,
-    "outDir": "dist",
-    "resolveJsonModule": true,
-    "sourceMap": true,
+    "target": "es2025",
+    "lib": [
+      "ES2025",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "types": [
+      "node"
+    ],
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "verbatimModuleSyntax": true,
+    "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
-    "target": "ES2020",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
   },
-  "include": ["src/**/*"],
-  "exclude": [
-    "node_modules",
-    "dist"
+  "include": [
+    "./src"
   ]
 }

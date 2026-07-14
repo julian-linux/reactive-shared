@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react'
 
 // Material Components
+import MenuIcon from '@mui/icons-material/Menu'
 import AppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
@@ -9,16 +10,15 @@ import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
 
 // Icons
-import MenuIcon from '@mui/icons-material/Menu'
 
 // Shared
+import Menu from './menu'
+import { sxAppBar, sxLinkHome } from './sx'
 import { useAppContext } from '../../hoc/hooks'
 
 // Components
-import Menu from './menu'
 
 // Styles
-import { sxAppBar, sxLinkHome } from './sx'
 
 // Interfaces
 interface ButtonAppBarProps {

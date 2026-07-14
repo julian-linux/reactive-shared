@@ -1,38 +1,29 @@
-// Libraries
-import React, { ReactElement, useCallback, useMemo, useState, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import map from 'lodash/map'
-// Import isEmpty from 'lodash/isEmpty'
+import React, { useCallback, useMemo, useState, useRef } from 'react'
+import type { ReactElement } from 'react'
 
-// Material components
+import CloseIcon from '@mui/icons-material/Close'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
-import List from '@mui/material/List'
-import ListItemButton from '@mui/material/ListItemButton'
-import ListItemAvatar from '@mui/material/ListItemAvatar'
-import ListItemText from '@mui/material/ListItemText'
 import IconButton from '@mui/material/IconButton'
+import List from '@mui/material/List'
+import ListItemAvatar from '@mui/material/ListItemAvatar'
+import ListItemButton from '@mui/material/ListItemButton'
+import ListItemText from '@mui/material/ListItemText'
+import type { SxProps, Theme } from '@mui/system'
 
-// Icons
-import CloseIcon from '@mui/icons-material/Close'
+import { useNavigate } from 'react-router-dom'
 
-// Intl
+import map from 'lodash/map'
+
+import { sxCloseDialogButton, sxDialogPrint } from './sx'
 import { Intl } from '../../utils'
 
-// Styles
-import { sxCloseDialogButton, sxDialogPrint } from './sx'
-
-// Interface
-import { SxProps, Theme } from '@mui/system'
-
-// #region
 export interface SelectedItemProps {
   id: string | number
   name: string
-
   [key: string]: any
 }
 
@@ -42,7 +33,6 @@ export interface DialogOptionProps {
   to?: string | ((selectedItem: SelectedItemProps) => void)
   onConfirm?: (selectedItem: SelectedItemProps) => void
   Component?: React.ComponentType<{ item: SelectedItemProps, onClose: () => void }>
-  // Component?: NamedExoticComponent<ChangeStatusProps>
   disabled?: boolean | ((selectedItem: SelectedItemProps) => boolean)
   shouldRender?: (selectedItem: SelectedItemProps) => boolean
   dialogTitle?: string | ((selectedItem: SelectedItemProps) => string)
@@ -63,17 +53,13 @@ interface DefaultDialogProps {
   dialogProps?: { sx?: SxProps }
 }
 
-// type ActionToConfirmProps = ((selectedItem: any) => void) | undefined
-
 type HandleClickProps = (options: DialogOptionProps, key: string) => () => void
-
-// #endregion
 
 const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, onClose, selectedItem, dialogFullScreen, dialogProps }) => {
   const navigate = useNavigate()
   const [showRender, setShowRender] = useState('renderOptionList')
   const [selectedOption, setSelectedOption] = useState('')
-  const actionToConfirm = useRef<any>()
+  const actionToConfirm = useRef<any>(null)
 
   const fullScreen = dialogFullScreen || options?.[selectedOption]?.fullScreen || false
 
@@ -94,7 +80,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
       actionToConfirm.current = onConfirm
       setShowRender('renderConfirmBox')
     }
-  }, [navigate, selectedItem.id])
+  }, [navigate, selectedItem])
 
   const handleConfirmClick = useCallback(async () => {
     if (typeof actionToConfirm.current === 'function') {
@@ -130,7 +116,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
         )}
       </List>
     )
-  }, [options, handleClick])
+  }, [options, selectedItem, handleClick])
 
   const renderConfirmBox = useMemo(() => {
     return (
@@ -161,7 +147,7 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
   const renderItemComponent = React.useMemo(() => {
     if (selectedOption === '') return null
 
-    const { Component } = options[selectedOption]
+    const Component = options[selectedOption]?.Component
 
     if (Component === undefined) return undefined
 

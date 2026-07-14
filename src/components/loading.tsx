@@ -2,9 +2,9 @@
 import React from 'react'
 
 // Material Components
+import Backdrop from '@mui/material/Backdrop'
 import Box from '@mui/material/Box'
 import CircularProgress from '@mui/material/CircularProgress'
-import Backdrop from '@mui/material/Backdrop'
 
 // Styles
 import { sxLoadingBackdrop } from './styles'

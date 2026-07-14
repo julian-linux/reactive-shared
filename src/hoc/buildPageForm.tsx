@@ -1,33 +1,29 @@
-import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-import {
+import Box from '@mui/material/Box'
+import Paper from '@mui/material/Paper'
+
+import { useParams } from 'react-router-dom'
+
+import each from 'lodash/each'
+import isEmpty from 'lodash/isEmpty'
+
+import { useAppContext } from './hooks'
+import { CreateForm } from '../components/form'
+import { Loading } from '../components/loading'
+import { onlyText } from '../utils/intlHelpers'
+
+import type { BuildFormProps, InputsFormConfigProps } from '../components/form'
+import type { HookResultProps } from '../utils/endpoints'
+import type {
   UseMutateFunction,
   UseMutationOptions,
   UseQueryOptions,
   UseQueryResult
-} from 'react-query'
+} from '@tanstack/react-query'
 
-import { useParams } from 'react-router-dom'
-import isEmpty from 'lodash/isEmpty'
-import each from 'lodash/each'
-
-// Material Components
-import Box from '@mui/material/Box'
-import Paper from '@mui/material/Paper'
-
-// Context
-import { useAppContext } from './hooks'
-
-// Shared
-import { CreateForm, BuildFormProps, InputsFormConfigProps } from '../components/form'
-import { Loading } from '../components/loading'
-import { HookResultProps } from '../utils/endpoints'
-import { onlyText } from '../utils/intl'
-
-// #region
-// Interfaces
 interface AnyParams { [key: string]: any }
-export type UseMutateActionProps = (id: number | string, useMutateOptions: UseMutationOptions) => HookResultProps
+export type UseMutateActionProps = (id: number | string, useMutateOptions: UseMutationOptions) => HookResultProps<any, any>
 export type BeforeMutateActionProps = (formData: { [key: string]: any }, mutate: UseMutateFunction<unknown, unknown, unknown>) => void
 export type UseQueryActionProps = (params: { id: number | string, params: AnyParams | undefined }, options: UseQueryOptions & { idRequired: boolean }) => UseQueryResult
 export type AfterMutateActionProps = (id: number | string | null, mutateData: any, error: any) => void
@@ -102,7 +98,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
       enabled: Boolean(id),
       idRequired: true,
       ...useQueryOptions
-    }
+    } as UseQueryOptions & { idRequired: boolean }
   }, [id, useQueryOptions])
 
   const { isLoading = false, data: queryData = {} }: any = useQuery({ id, params: useQueryParams }, options)
@@ -116,8 +112,8 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
   }, [beforeMutate, mutate])
 
   const errors = useMemo(() => {
-    if (!!error) {
-      const errors = JSON.parse(error?.message || "{}")
+    if (error) {
+      const errors = JSON.parse(error?.message || '{}')
       return errors?.errors || {}
     }
 
@@ -152,7 +148,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
     if (confirmButtonLangkey !== undefined) return confirmButtonLangkey
     if (newId !== '') return 'GENERAL.EDIT'
     return 'GENERAL.ADD'
-  }, [confirmButtonLangkey, id])
+  }, [confirmButtonLangkey, newId])
 
   /** set title */
   useEffect(() => {
@@ -162,7 +158,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
       const title = `${entity.toLocaleUpperCase()}.${newId !== '' ? 'EDIT' : 'ADD'}.TITLE`
       setPageTitle(onlyText(title))
     }
-  }, [id, setPageTitle, entity, pageTitle])
+  }, [id, newId, setPageTitle, entity, pageTitle])
 
   /** when a mutation is made */
   useEffect(() => {
@@ -196,7 +192,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
           loading={adding}
           disabled={disabled}
           noBackButton={noBackButton}
-          onBackAction={onBackAction}
+          {...(onBackAction && { onBackAction })}
           confirmButtonLangkey={confirmButtonText}
           inputsFormConfig={formData}
           responseErrors={errors}

@@ -1,16 +1,14 @@
-// Libraries
 import React, { useCallback, useState, useEffect } from 'react'
-import isEqual from 'lodash/isEqual'
 
-// Material Components
-import TextField from '@mui/material/TextField'
-import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker'
 
-// Shared
+import isEqual from 'lodash/isEqual'
+
 import { useLabel, usePreviousValue } from '../../utils'
-import { BuildInputProps } from './sharedTypes'
+
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedDateTimePicker: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -29,30 +27,23 @@ const SharedDateTimePicker: React.FC<BuildInputProps> = ({
 
   const handleChange = useCallback((value: any) => {
     setValue(value)
-    field.onChange(value)
-  }, [])
+    field?.onChange?.(value)
+  }, [field?.onChange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
-      field.onChange(value)
+      field?.onChange?.(value)
       setValue(value)
     }
-  }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [previousValue, value, field?.onChange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <MobileDateTimePicker
-        {...field}
-        {...inputProps}
         label={renderLabel}
-        inputFormat='yyyy-MM-DD hh:mm a'
-        mask="____-__-__ __:__ _M"
-        disableMaskedInput
+        format='yyyy-MM-DD hh:mm a'
         value={value}
         onChange={handleChange}
-        renderInput={(params) => {
-          return <TextField {...params} sx={{ width: 1, mt: 2 }} />
-        }}
       />
     </LocalizationProvider>
   )

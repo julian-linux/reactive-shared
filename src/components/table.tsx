@@ -1,14 +1,15 @@
 import React, { useMemo } from 'react'
-import map from 'lodash/map'
 
-// Material Components
-import Table, { TableProps } from '@mui/material/Table'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import type { TableProps } from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
+
+import map from 'lodash/map'
 
 export interface AppTableProps extends TableProps {
   headItems: string[]
@@ -57,7 +58,7 @@ const AppTableComponent: React.FC<AppTableProps> = ({
                 component={keyItem === 0 ? 'th' : undefined}
                 scope={keyItem === 0 ? 'row' : undefined}
                 align={keyItem > 0 ? 'right' : 'left'}
-                sx={{whiteSpace: 'pre'}}
+                sx={{ whiteSpace: 'pre' }}
               >
                 {item}
               </TableCell>

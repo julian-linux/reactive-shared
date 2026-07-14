@@ -1,24 +1,18 @@
 import React, { useCallback, useRef, useMemo, useEffect } from 'react'
 
-import Box from '@mui/material/Box'
-import List from '@mui/material/List'
-import IconButton from '@mui/material/IconButton'
-import Alert from '@mui/material/Alert'
-
 import CloudUploadIcon from '@mui/icons-material/CloudUpload'
-import CloudIcon from '@mui/icons-material/Cloud'
-
-import { Intl, onlyText } from '../../../utils/intl'
-import { Loading } from '../../loading'
-
-import { useAppContext } from '../../../hoc/hooks'
-
-import FilesForUpload from './filesForUpload'
-import FileRow, { FileProp } from './fileRow'
+import Box from '@mui/material/Box'
+import IconButton from '@mui/material/IconButton'
 
 import { ACCEPTED_FILE_TYPES, IMAGE_TYPES, DOCUMENT_TYPES } from './constants'
+import FileRow from './fileRow'
+import FilesForUpload from './filesForUpload'
+import { useAppContext } from '../../../hoc/hooks'
+import { Intl } from '../../../utils/intl'
+import { onlyText } from '../../../utils/intlHelpers'
 
-import { BuildInputProps } from '../sharedTypes'
+import type { BuildInputProps } from '../sharedTypes'
+import type { FileProp } from './sharedTypes'
 
 interface SharedUploadFilesProps extends BuildInputProps {
   uploadedFiles?: FileProp[]
@@ -26,21 +20,16 @@ interface SharedUploadFilesProps extends BuildInputProps {
 }
 
 export const SharedUploadFiles = ({
-  renderProps = { field: { onChange: () => {} } },
-  inputProps = {},
+  renderProps,
+  inputProps,
   uploadedFiles = [],
   disableUpload = false
 }: SharedUploadFilesProps) => {
-  const {
-    field: {
-      onChange: onChangeField = () => {}
-    } = { onChange: () => {} }
-  } = renderProps || { field: { onChange: () => {} } }
 
   const {
     multiple = false,
     maxSize = 5 * 1024 * 1024,
-    fileType = ACCEPTED_FILE_TYPES.IMAGES as keyof typeof ACCEPTED_FILE_TYPES,
+    fileType = ACCEPTED_FILE_TYPES.IMAGES as keyof typeof ACCEPTED_FILE_TYPES
   } = inputProps || {}
 
   const idRef = useRef<string>('')
@@ -96,54 +85,50 @@ export const SharedUploadFiles = ({
       return true
     })
 
-    setFiles(prevFiles => ([ ...prevFiles, ...Array.from(files) ]))
-  }, [maxSize, setSnackBarMessage])
+    setFiles(prevFiles => ([...prevFiles, ...Array.from(files)]))
+  }, [accept, maxSize, setSnackBarMessage])
 
   const handleRemoveFile = useCallback((idx: number) => {
     setFiles(prevFiles => prevFiles.filter((_, index) => index !== idx))
   }, [])
 
   useEffect(() => {
-    if (typeof onChangeField === 'function') {
-      onChangeField(files)
-    }
-  }, [files])
+    renderProps?.field?.onChange?.(files)
+  }, [files, renderProps?.field])
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
       {!disableUpload && (
-        <Box display="flex" alignItems='center'>
-          <Intl langKey={langKey} variant="h6" color="primary" mr={2} sx={{ fontStyle: 'italic' }} />
-          <Box mr={2}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Intl langKey={langKey} variant="h6" color="primary" sx={{ fontStyle: 'italic', mr: 2 }} />
+          <Box sx={{ mr: 2 }}>
             <input
               accept={accept}
-            multiple={multiple}
-            style={{ display: 'none' }}
-            id={`button-file-${id}`}
-            type="file"
-            onChange={handleSetFiles}
+              multiple={multiple}
+              style={{ display: 'none' }}
+              id={`button-file-${id}`}
+              type="file"
+              onChange={handleSetFiles}
+            />
+            <label htmlFor={`button-file-${id}`}>
+              <IconButton color="primary" component="span" size="small" >
+                <CloudUploadIcon />
+              </IconButton>
+            </label>
+          </Box>
+          <Intl
+            sx={{ ml: 2, fontSize: '10px', fontStyle: 'italic' }}
+            langKey="FILE.LABEL.MAX_SIZE"
+            variant="body2"
+            color="textSecondary"
+            replace={{ size: (maxSize / 1024 / 1024).toFixed(0) }}
           />
-          <label htmlFor={`button-file-${id}`}>
-            <IconButton color="primary" component="span" size="small" >
-              <CloudUploadIcon />
-            </IconButton>
-          </label>
         </Box>
-        <Intl
-          ml={2}
-          langKey="FILE.LABEL.MAX_SIZE"
-          variant="body2"
-          fontSize="10px"
-          color="textSecondary"
-          fontStyle='italic'
-          replace={{ size: (maxSize / 1024 / 1024).toFixed(0) }}
-        />
-      </Box>
       )}
       {!!files?.length && (
         <>
-        <Intl langKey='FORM.LABEL.FILES_FOR_UPLOAD' variant="caption" color="textSecondary" sx={{ fontStyle: 'italic', mt: 1 }} />
-        <FilesForUpload files={files} onRemoveFile={handleRemoveFile} />
+          <Intl langKey='FORM.LABEL.FILES_FOR_UPLOAD' variant="caption" color="textSecondary" sx={{ fontStyle: 'italic', mt: 1 }} />
+          <FilesForUpload files={files} onRemoveFile={handleRemoveFile} />
         </>
       )}
       {!!uploadedFiles?.length && (

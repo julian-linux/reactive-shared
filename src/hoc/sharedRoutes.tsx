@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react'
+
 import { Routes, Route } from 'react-router-dom'
 
-import { getLocalStorageValue } from '../utils'
-
 import { NotFound } from '../components/notFound'
+import { getLocalStorageValue } from '../utils'
 
 const logged = Boolean(getLocalStorageValue('token'))
 

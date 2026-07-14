@@ -1,7 +1,10 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios'
+import axios from 'axios'
+
 import set from 'lodash/set'
 
 import { getLocalStorageValue } from './localStorage'
+
+import type { AxiosInstance, AxiosRequestConfig } from 'axios'
 
 const token = getLocalStorageValue('token')
 

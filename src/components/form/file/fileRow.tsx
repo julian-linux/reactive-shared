@@ -1,19 +1,15 @@
+import Button from '@mui/material/Button'
+import ListItem from '@mui/material/ListItem'
+import Typography from '@mui/material/Typography'
+import Box from '@mui/system/Box'
+
 import { useQuery, useMutation } from '@tanstack/react-query'
 
-import Box from '@mui/system/Box'
-import ListItem from '@mui/material/ListItem'
-
-import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
-
-import { api } from '../../../utils/api'
-
-import { Loading } from '../../loading'
-
-import { FileProp } from './sharedTypes'
 import FileAvatar from './avatar'
-
 import { isImageType } from './constants'
+import type { FileProp } from './sharedTypes'
+import { api } from '../../../utils/api'
+import { Loading } from '../../loading'
 
 const fetchImageBlob = async (file: FileProp): Promise<string> => {
   const response = await api.get(`files/file/${file.id}`, {
@@ -22,7 +18,7 @@ const fetchImageBlob = async (file: FileProp): Promise<string> => {
       Accept: file.content_type
     }
   })
-  return URL.createObjectURL(new Blob([response]))
+  return URL.createObjectURL(new Blob([response as unknown as BlobPart], { type: file.content_type }))
 }
 
 interface FileRowProps {
@@ -44,7 +40,6 @@ const FileRow = ({ file }: FileRowProps) => {
     mutationFn: () => api.get(`files/file/${file.id}`)
   })
 
-
   const handleDownloadFile = async () => {
     const link = document.createElement('a')
     link.download = file.name
@@ -58,13 +53,13 @@ const FileRow = ({ file }: FileRowProps) => {
 
     const fileBlob = await getFile()
 
-      const url = URL.createObjectURL(new Blob([fileBlob]))
-      const a = document.createElement('a')
-      a.href = url
-      a.download = file.name
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
+    const url = URL.createObjectURL(new Blob([fileBlob as unknown as BlobPart], { type: file.content_type }))
+    const a = document.createElement('a')
+    a.href = url
+    a.download = file.name
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
   }
 
   if (isLoading) {
@@ -79,8 +74,8 @@ const FileRow = ({ file }: FileRowProps) => {
 
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box mr={1}>
-        <FileAvatar file={file} imageUrl={imageUrl} />
+      <Box sx={{ mr: 1 }}>
+        <FileAvatar file={file} imageUrl={imageUrl || ''} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
         <Button onClick={handleDownloadFile}>

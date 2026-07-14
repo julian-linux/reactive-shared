@@ -1,15 +1,17 @@
 import React, { useMemo, useCallback, useEffect, useState } from 'react'
-import isEqual from 'lodash/isEqual'
 
 // Material Components
 import Box from '@mui/material/Box'
-import FormGroup from '@mui/material/FormGroup'
 import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
 import FormHelperText from '@mui/material/FormHelperText'
 import Switch from '@mui/material/Switch'
 
-import { BuildInputProps } from './sharedTypes'
+import isEqual from 'lodash/isEqual'
+
 import { usePreviousValue, useLabel, onlyText } from '../../utils'
+
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedSwitch: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -77,10 +79,12 @@ const SharedSwitch: React.FC<BuildInputProps> = ({
           disabled={disabled}
           control={(
             <Switch
-            checked={checked}
-            onChange={handleChange}
-            inputProps={{ 'aria-label': 'controlled' }}
-          />)}
+              checked={checked}
+              onChange={handleChange}
+              slotProps={{
+                input: { 'aria-label': 'controlled' }
+              }}
+            />)}
           label={renderLabel}
         />
       </FormGroup>

@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/system'
+import type { SxProps } from '@mui/system'
 
 export const sxCloseDialogButton: SxProps = {
   position: 'absolute',
@@ -38,4 +38,3 @@ export const sxDialogPrint: SxProps = {
     }
   }
 }
-

@@ -1,22 +1,23 @@
 import React, { useCallback, useMemo, useState, useEffect } from 'react'
+
+import Box from '@mui/material/Box'
+import Checkbox from '@mui/material/Checkbox'
+import Chip from '@mui/material/Chip'
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import InputLabel from '@mui/material/InputLabel'
+import ListItemText from '@mui/material/ListItemText'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import type { SelectChangeEvent } from '@mui/material/Select'
+
 import isEqual from 'lodash/isEqual'
 
-// Material Components
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import FormControl from '@mui/material/FormControl'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import FormHelperText from '@mui/material/FormHelperText'
-import ListItemText from '@mui/material/ListItemText'
-import Checkbox from '@mui/material/Checkbox'
-import Box from '@mui/material/Box'
-import Chip from '@mui/material/Chip'
-
-// Shared
-import { BuildInputProps } from './sharedTypes'
 import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
 
-const getValue = (fieldValue, value) => {
+import type { BuildInputProps, ItemOption } from './sharedTypes'
+
+const getValue = (fieldValue: string | string[], value: string | string[]): Array<string | number> => {
   if (typeof fieldValue === 'string') {
     return [fieldValue]
   }
@@ -24,7 +25,7 @@ const getValue = (fieldValue, value) => {
     return [value]
   }
 
-  return fieldValue || value || []
+  return Array.isArray(fieldValue) ? fieldValue : Array.isArray(value) ? value : []
 }
 
 const SharedSelectMultiple: React.FC<BuildInputProps> = ({
@@ -47,21 +48,26 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(value)
 
-  const [inputValue, setInputValue] = useState(getValue(field.value, value))
+  const [inputValue, setInputValue] = useState<Array<string | number>>(getValue(field.value, value))
 
-  const handleOnChange = useCallback((evt: SelectChangeEvent) => {
+  const normalizedItems = useMemo<ItemOption[]>(() => {
+    return Array.isArray(items) ? items : []
+  }, [items])
+
+  const handleOnChange = useCallback((evt: SelectChangeEvent<string[]>) => {
     const { value } = evt.target
+    const nextValue = getValue(value, value)
 
-    setInputValue(value)
-    onChangeField(value)
+    setInputValue(nextValue)
+    onChangeField(nextValue)
 
     if (typeof onChange === 'function') {
-      onChange(value)
+      onChange(nextValue)
     }
-  }, [onChange])// eslint-disable-line react-hooks/exhaustive-deps
+  }, [onChange, onChangeField])
 
   const renderOptions = useMemo(() => {
-    return items.map(({ label, value }) => {
+    return normalizedItems.map(({ label, value }: ItemOption) => {
       const checked = inputValue.includes(value)
       const renderLabel = getLabelText(label)
 
@@ -72,14 +78,14 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
         </MenuItem>
       )
     })
-  }, [items, inputValue])
+  }, [inputValue, normalizedItems])
 
   const renderValue = useCallback((selected: any) => {
     return (
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-        {items
-          .filter(({ value }) => selected.includes(value))
-          .map(({ label }: { label: string | (() => string) }) => {
+        {normalizedItems
+          .filter(({ value }: ItemOption) => selected.includes(value))
+          .map(({ label }: ItemOption) => {
             const renderLabel = getLabelText(label)
             return (
               <Chip key={renderLabel} label={renderLabel} />
@@ -87,7 +93,7 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
           })}
       </Box>
     )
-  }, [items])
+  }, [normalizedItems])
 
   const renderHelpText = useMemo(() => {
     if (error != null) {
@@ -104,10 +110,11 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
-      onChangeField(value)
-      setInputValue(value)
+      const nextValue = getValue(field.value, value)
+      onChangeField(nextValue)
+      setInputValue(nextValue)
     }
-  }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [field.value, previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <FormControl fullWidth error={Boolean(error)} required={required} sx={{ mt: 2 }}>

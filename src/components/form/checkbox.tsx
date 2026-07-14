@@ -1,16 +1,17 @@
 import React, { useMemo, useCallback, useLayoutEffect, useState } from 'react'
-import isEqual from 'lodash/isEqual'
-import isBoolean from 'lodash/isBoolean'
 
-// Material Components
 import Box from '@mui/material/Box'
-import FormGroup from '@mui/material/FormGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import Checkbox from '@mui/material/Checkbox'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormGroup from '@mui/material/FormGroup'
 import FormHelperText from '@mui/material/FormHelperText'
 
-import { BuildInputProps } from './sharedTypes'
+import isBoolean from 'lodash/isBoolean'
+import isEqual from 'lodash/isEqual'
+
 import { usePreviousValue, useLabel, onlyText } from '../../utils'
+
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedCheckbox: React.FC<BuildInputProps> = ({
   renderProps: {

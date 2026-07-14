@@ -1,17 +1,17 @@
-import {
+import type { InputBaseProps } from '@mui/material/InputBase'
+import type { OverridableComponent } from '@mui/material/OverridableComponent'
+import type { SvgIconTypeMap } from '@mui/material/SvgIcon'
+import type { SxProps } from '@mui/system'
+
+import { ACCEPTED_FILE_TYPES } from './file/constants'
+
+import type { OnlyTextProps } from '../../utils'
+import type {
   ControllerRenderProps, UseFormStateReturn, ControllerFieldState
 } from 'react-hook-form'
 
-import { SvgIconTypeMap } from '@mui/material/SvgIcon'
-import { OverridableComponent } from '@mui/material/OverridableComponent'
-import { SxProps } from '@mui/system'
-
-import { ACCEPTED_FILE_TYPES } from './file/constants'
-import { OnlyTextProps } from '../../utils'
-
-// Interfaces
 type HTMLTypeProps = 'file' | 'checkbox' | 'radio' | 'select' | 'selectMultiple' | 'text' | 'textarea' | 'password' | 'email' | 'number' | 'switch'
-type SharedTypeProps = 'numberFormat' | 'divider' | 'datePicker' | 'dateTimePicker' | 'component'
+type SharedTypeProps = 'numberFormat' | 'divider' | 'datePicker' | 'dateTimePicker' | 'component' | 'title'
 type TypeProps = HTMLTypeProps | SharedTypeProps
 
 export type ItemOption = { label: string | (() => string), value: string | number, disabled?: boolean }
@@ -22,7 +22,7 @@ export interface InputProps {
   name: string
   label: string | (() => string)
   yupValidation?: any
-  icon?: OverridableComponent<SvgIconTypeMap<{}, 'svg'>> & { muiName: string; }
+  icon?: OverridableComponent<SvgIconTypeMap<object, 'svg'>> & { muiName: string; }
   defaultValue?: any
   sx?: SxProps
   className?: string
@@ -31,7 +31,7 @@ export interface InputProps {
   parentBox?: { [key: string]: any }
   helpText?: string | string | ((onlyText: OnlyTextProps) => string)
   disabled?: boolean
-  InputProps?: any
+  slotProps?: InputBaseProps['slotProps']
   multiline?: boolean
   multiple?: boolean
   required?: boolean

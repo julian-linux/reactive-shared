@@ -1,22 +1,17 @@
-// Libraries
 import React, { useMemo, useCallback, useEffect, useState } from 'react'
+
+import Error from '@mui/icons-material/Error'
+import { red } from '@mui/material/colors'
+import InputAdornment from '@mui/material/InputAdornment'
+import type { InputBaseComponentsPropsOverrides } from '@mui/material/InputBase'
+import TextField from '@mui/material/TextField'
+
 import isEqual from 'lodash/isEqual'
 
-// Material Components
-import { red } from '@mui/material/colors'
-import TextField from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
-
-// Shared
+import { sxTextField } from './styles'
 import { usePreviousValue, useLabel, onlyText } from '../../utils'
 
-// Icons
-import Error from '@mui/icons-material/Error'
-
-import { BuildInputProps } from './sharedTypes'
-
-// Styles
-import { sxTextField } from './styles'
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -27,7 +22,7 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
     sx = {},
     label,
     helpText,
-    InputProps = {},
+    slotProps = {},
     icon,
     onChange,
     value,
@@ -83,6 +78,25 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
 
   const renderLabel = useLabel(label)
 
+  const mergedSlotProps = useMemo(() => {
+    const filteredSlotProps = Object.entries(slotProps ?? {}).reduce<Record<string, unknown>>((acc, [key, value]) => {
+      if (value !== undefined) {
+        acc[key] = value
+      }
+
+      return acc
+    }, {})
+
+    return {
+      ...filteredSlotProps,
+      input: {
+        startAdornment: renderStartAdornment,
+        endAdornment: renderEndAdornment,
+        ...(slotProps?.input as InputBaseComponentsPropsOverrides)
+      }
+    }
+  }, [renderEndAdornment, renderStartAdornment, slotProps])
+
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       field.onChange(value)
@@ -95,7 +109,6 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
       fullWidth
       margin='normal'
       {...inputProps}
-      {...field}
       inputRef={field.ref}
       onChange={handleChange}
       value={inputValue}
@@ -103,11 +116,7 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
       label={renderLabel}
       error={Boolean(error)}
       helperText={getHelperText}
-      InputProps={{
-        startAdornment: renderStartAdornment,
-        endAdornment: renderEndAdornment,
-        ...InputProps
-      }}
+      slotProps={mergedSlotProps}
     />
   )
 }

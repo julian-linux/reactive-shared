@@ -1,4 +1,6 @@
-import React, { ComponentType, useMemo } from 'react'
+import React, { useMemo } from 'react'
+import type { ComponentType } from 'react'
+
 import { Routes, Route, Outlet } from 'react-router-dom'
 
 export interface BuildEntityPageProps {

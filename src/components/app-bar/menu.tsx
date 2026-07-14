@@ -1,6 +1,5 @@
 // Libraries
 import React, { Fragment, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 
 // Material Components
 import Divider from '@mui/material/Divider'
@@ -11,11 +10,13 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import ListSubheader from '@mui/material/ListSubheader'
 
+import { Link } from 'react-router-dom'
+
 // Intl
-import { Intl, onlyText } from '../../utils'
 
 // Styles
 import { sxSubHeader } from './sx'
+import { Intl, onlyText } from '../../utils'
 
 // interfaces
 export interface MenuItemsProps {

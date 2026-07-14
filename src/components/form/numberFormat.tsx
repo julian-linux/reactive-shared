@@ -1,9 +1,11 @@
 import React from 'react'
 
-import { NumericFormat, NumericFormatProps } from 'react-number-format'
+import { NumericFormat } from 'react-number-format'
 
 import TextField from './textField'
-import { BuildInputProps } from './sharedTypes'
+
+import type { BuildInputProps } from './sharedTypes'
+import type { NumericFormatProps } from 'react-number-format'
 
 interface CustomProps {
   onChange: (event: { target: { name: string, value: string } }) => void
@@ -25,6 +27,7 @@ const NumberFormatCustom = React.forwardRef<NumericFormatProps, CustomProps>(({ 
       }}
       thousandSeparator='.'
       decimalSeparator=','
+      prefix="$"
       decimalScale={2}
     />
   )
@@ -38,10 +41,9 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({ renderProps, i
       renderProps={renderProps}
       inputProps={{
         ...inputProps,
-        InputProps: {
-          inputComponent: NumberFormatCustom as any
-        }
+        inputComponent: NumberFormatCustom as any
       }}
+
     />
   )
 }

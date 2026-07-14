@@ -1,6 +1,6 @@
 import { useRef, useEffect, useMemo } from 'react'
 
-import { onlyText } from '../utils/intl'
+import { onlyText } from '../utils/intlHelpers'
 
 export const shouldTranslateLabel = (label: string): boolean => {
   return label.includes('.') && label === label.toUpperCase()
@@ -28,7 +28,7 @@ export const getLabelText = (label: string | (() => string)): string => {
 }
 
 export const usePreviousValue = <T>(value: T): T => {
-  const ref = useRef<T>()
+  const ref = useRef<T>(null)
 
   useEffect(() => {
     ref.current = value

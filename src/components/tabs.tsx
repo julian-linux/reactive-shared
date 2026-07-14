@@ -1,13 +1,14 @@
-import React, { ReactElement, useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useState } from 'react'
+import type { ReactElement } from 'react'
+
+import Box from '@mui/material/Box'
+import Tab from '@mui/material/Tab'
+import Tabs from '@mui/material/Tabs'
+import Typography from '@mui/material/Typography'
+
 import map from 'lodash/map'
 
-// Material Components
-import Tabs from '@mui/material/Tabs'
-import Tab from '@mui/material/Tab'
-import Typography from '@mui/material/Typography'
-import Box from '@mui/material/Box'
-
-const a11yProps = (index: string): {id: string, 'aria-controls': string} => ({
+const a11yProps = (index: string): { id: string, 'aria-controls': string } => ({
   id: `simple-tab-${index}`,
   'aria-controls': `simple-tabpanel-${index}`
 })

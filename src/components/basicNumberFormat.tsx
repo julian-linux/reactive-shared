@@ -1,12 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import  { NumericFormat, NumericFormatProps } from 'react-number-format'
 
-import { SxProps, Theme } from '@mui/material/styles'
-import TextField, { TextFieldProps } from '@mui/material/TextField'
-import InputAdornment from '@mui/material/InputAdornment'
+import type { SxProps, Theme } from '@mui/material/styles'
+import TextField from '@mui/material/TextField'
 
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney'
-import { sxTextField } from './form/styles'
+import { NumericFormat } from 'react-number-format'
 
 export interface BasicNumberFormatProps {
   name: string,
@@ -15,30 +12,6 @@ export interface BasicNumberFormatProps {
   value: string | number,
   sx?: SxProps<Theme>
 }
-
-const BasicNumberFormatCustom = React.forwardRef<HTMLInputElement, NumericFormatProps & { name?: string; onChange?: (event: any) => void }>(
-  ({ onChange, name, ...props }, ref) => {
-    return (
-      <NumericFormat
-        {...props}
-        getInputRef={ref}
-        onValueChange={({ value }) => {
-          if (onChange) {
-            onChange({
-              target: {
-                name: name!,
-                value
-              }
-            })
-          }
-        }}
-        thousandSeparator='.'
-        decimalSeparator=','
-      />
-    )
-  }
-)
-BasicNumberFormatCustom.displayName = 'BasicNumberFormatCustom'
 
 const BasicNumberFormat: React.FC<BasicNumberFormatProps> = ({ name, label, value, onChange, sx }) => {
   const [inputValue, setValue] = useState(value || '')
@@ -55,24 +28,19 @@ const BasicNumberFormat: React.FC<BasicNumberFormatProps> = ({ name, label, valu
   }, [value])
 
   return (
-    <TextField
-      fullWidth
-      margin='normal'
-      name={name}
-      label={label}
+    <NumericFormat
       value={inputValue}
-      sx={{ ...sxTextField, ...sx }}
-      size='small'
-      InputProps={{
-        inputComponent: BasicNumberFormatCustom as any,
-        startAdornment: (
-          <InputAdornment position='start'>
-            <AttachMoneyIcon color='action' />
-          </InputAdornment>
-        )
-      }}
       onChange={handleChange}
+      customInput={TextField}
+      thousandSeparator
+      valueIsNumericString
+      prefix="$"
+      variant="standard"
+      label={label}
+      name={name}
+      sx={sx}
     />
+
   )
 }
 

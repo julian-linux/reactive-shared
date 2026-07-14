@@ -1,15 +1,16 @@
 import React, { Suspense } from 'react'
-import { HashRouter as Router } from 'react-router-dom'
 
-// Material Components
 import Box from '@mui/material/Box'
 
+import { HashRouter as Router } from 'react-router-dom'
 
+import SharedRoutes from './sharedRoutes'
 import AppBar from '../components/app-bar'
 import { Loading } from '../components/loading'
 import { getLocalStorageValue } from '../utils'
 
-import SharedRoutes, { RouteProp } from './sharedRoutes'
+import type { RouteProp } from './sharedRoutes'
+
 interface AppRoutesProps {
   logo: any
   UserEntity: any

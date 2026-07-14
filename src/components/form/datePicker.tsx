@@ -1,16 +1,14 @@
-// Libraries
 import React, { useCallback, useState, useEffect } from 'react'
-import isEqual from 'lodash/isEqual'
 
-// Material Components
-import TextField from '@mui/material/TextField'
-import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker'
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
+import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker'
 
-// Shared
+import isEqual from 'lodash/isEqual'
+
 import { useLabel, usePreviousValue } from '../../utils'
-import { BuildInputProps } from './sharedTypes'
+
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedDatePickerComponent: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -18,7 +16,6 @@ const SharedDatePickerComponent: React.FC<BuildInputProps> = ({
   },
   inputProps: {
     label,
-    size = 'medium',
     onChange,
     ...inputProps
   }
@@ -30,32 +27,27 @@ const SharedDatePickerComponent: React.FC<BuildInputProps> = ({
 
   const handleChange = useCallback((value: any) => {
     setValue(value)
-    field.onChange(value)
+    field?.onChange?.(value)
 
     if (typeof onChange === 'function') {
       onChange(value)
     }
-  }, [])
+  }, [field?.onChange, onChange])// eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
-      field.onChange(value)
+      field?.onChange?.(value)
       setValue(value)
     }
-  }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [previousValue, value, field?.onChange, onChange]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <LocalizationProvider dateAdapter={AdapterMoment}>
       <MobileDatePicker
-        {...field}
-        {...inputProps}
         label={renderLabel}
-        inputFormat='yyyy-MM-DD'
+        format='yyyy-MM-DD'
         value={value}
         onChange={handleChange}
-        renderInput={(params) => {
-          return <TextField {...params} sx={{ mt: 2 }} size={size} />
-        }}
       />
     </LocalizationProvider>
   )

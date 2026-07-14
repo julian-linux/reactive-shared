@@ -1,17 +1,17 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react'
-import isEqual from 'lodash/isEqual'
 
-// Material Components
+import FormControl from '@mui/material/FormControl'
+import FormControlLabel from '@mui/material/FormControlLabel'
+import FormHelperText from '@mui/material/FormHelperText'
+import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
-import FormControlLabel from '@mui/material/FormControlLabel'
-import FormControl from '@mui/material/FormControl'
-import FormLabel from '@mui/material/FormLabel'
-import FormHelperText from '@mui/material/FormHelperText'
 
-// Shared
-import { BuildInputProps } from './sharedTypes'
+import isEqual from 'lodash/isEqual'
+
 import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
+
+import type { BuildInputProps } from './sharedTypes'
 
 const SharedRadio: React.FC<BuildInputProps> = ({
   renderProps: {
@@ -45,6 +45,8 @@ const SharedRadio: React.FC<BuildInputProps> = ({
 
   const renderOptions = useMemo(() => {
     if (items == null) return null
+
+    if (!Array.isArray(items)) return null
 
     return items.map(({ value, label }) => {
       const renderLabel = getLabelText(label)

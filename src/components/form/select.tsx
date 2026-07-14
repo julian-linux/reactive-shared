@@ -1,18 +1,19 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react'
+
+import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText'
+import InputLabel from '@mui/material/InputLabel'
+import ListSubheader from '@mui/material/ListSubheader'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
+import type { SelectChangeEvent } from '@mui/material/Select'
+
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 
-// Material Components
-import InputLabel from '@mui/material/InputLabel'
-import MenuItem from '@mui/material/MenuItem'
-import ListSubheader from '@mui/material/ListSubheader'
-import FormControl from '@mui/material/FormControl'
-import Select, { SelectChangeEvent } from '@mui/material/Select'
-import FormHelperText from '@mui/material/FormHelperText'
-
-// Shared
-import { BuildInputProps, ItemOption, GroupedItems } from './sharedTypes'
 import { onlyText, usePreviousValue, useLabel, getLabelText } from '../../utils'
+
+import type { BuildInputProps, ItemOption, GroupedItems } from './sharedTypes'
 
 type SelectProps = BuildInputProps & {
   inputProps: {
@@ -103,7 +104,7 @@ export const SharedSelect: React.FC<SelectProps> = ({
                 fontStyle: 'italic',
                 pl: 3,
                 fontWeight: 'bold',
-                fontSize: '0.875rem',
+                fontSize: '0.875rem'
               }}
             >
               {groupName}

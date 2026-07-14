@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 
-import {  AppContext, AppContextProps } from './appContext'
+import { AppContext, type AppContextProps } from './appContextValue'
 
 export const useAppContext = (): AppContextProps => {
   const context = useContext(AppContext)

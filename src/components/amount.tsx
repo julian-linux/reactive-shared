@@ -2,13 +2,13 @@
 import React, { useState, useCallback, useEffect } from 'react'
 
 // Material components
+import AddIcon from '@mui/icons-material/Add'
+import RemoveIcon from '@mui/icons-material/Remove'
 import Box from '@mui/material/Box'
 import Fab from '@mui/material/Fab'
 import TextField from '@mui/material/TextField'
 
 // Icons
-import AddIcon from '@mui/icons-material/Add'
-import RemoveIcon from '@mui/icons-material/Remove'
 
 // Shared
 import { onlyText } from '../utils'

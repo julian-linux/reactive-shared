@@ -1,41 +1,37 @@
-// Libraries
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { object } from 'yup'
 
-// Lodash
-import reduce from 'lodash/reduce'
-import map from 'lodash/map'
-import isEmpty from 'lodash/isEmpty'
-import each from 'lodash/each'
-
-// Material Components
 import Box from '@mui/material/Box'
+import type { BoxProps } from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import CircularProgress from '@mui/material/CircularProgress'
-import Tooltip from '@mui/material/Tooltip'
 import Dialog from '@mui/material/Dialog'
 import DialogActions from '@mui/material/DialogActions'
 import DialogContent from '@mui/material/DialogContent'
 import DialogContentText from '@mui/material/DialogContentText'
 import DialogTitle from '@mui/material/DialogTitle'
+import Tooltip from '@mui/material/Tooltip'
 
-// Intl
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm, Controller } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
+
+import each from 'lodash/each'
+import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
+
+import { object } from 'yup'
+
+import BuildInput from './buildInput'
 import { Intl, onlyText } from '../../utils'
 
-// Build Input
-import BuildInput from './buildInput'
-import { InputProps, RenderProps } from './sharedTypes'
+import type { InputProps, RenderProps } from './sharedTypes'
 
-// #region
-// Interfaces
 export interface BuildFormInputProps {
   name: string
   showInput?: boolean
   tooltip?: string
-  parentBox: { [key: string]: string }
+  parentBox?: BoxProps
 }
 
 export interface InputsFormConfigProps { [key: string]: InputProps }
@@ -56,8 +52,6 @@ export interface BuildFormProps {
   defaultSuccessMessage?: boolean,
   formBoxProps?: { [key: string]: any }
 }
-
-// #endregion
 
 const CreateFormContainer: React.FC<BuildFormProps> = ({
   loading,
@@ -93,8 +87,8 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
   } = useForm<{ [key: string]: any }>({ resolver: yupResolver(validationSchema) })
   const { isDirty } = formState
 
-  const confirmDialog = useCallback(() => { backTo ? navigate(backTo) : navigate(-1) }, [navigate, backTo])
-  const closeDialog = useCallback(() => { setOpen(false) }, [])
+  const confirmDialog = useCallback(() => backTo ? navigate(backTo) : navigate(-1), [navigate, backTo])
+  const closeDialog = useCallback(() => setOpen(false), [])
 
   const handleBackAction = useCallback(() => {
     if (isDirty) {
@@ -108,7 +102,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
         navigate(-1)
       }
     }
-  }, [navigate, backTo, open, isDirty])
+  }, [isDirty, backTo, onBackAction, navigate])
 
   const handleOnSubmit = useCallback((evt: React.SyntheticEvent) => {
     evt.preventDefault()
@@ -130,7 +124,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
 
       if (tooltip !== undefined) {
         return (
-          <Box key={key} mt={1} {...parentBox}>
+          <Box key={key} {...parentBox} sx={{ mt: 1, ...parentBox.sx }}>
             <Tooltip title={onlyText(tooltip)} arrow placement='top'>
               <div>
                 <Controller
@@ -146,7 +140,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
       }
 
       return (
-        <Box key={key} mt={1} {...parentBox}>
+        <Box key={key} sx={{ mt: 1, ...parentBox.sx }}>
           <Controller
             key={key}
             name={inputProps.name}
@@ -172,7 +166,7 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            <Intl transpileHTML paragraph langKey='GENERAL.GO_BACK.SUB_TITLE' />
+            <Intl transpileHTML langKey='GENERAL.GO_BACK.SUB_TITLE' />
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -181,13 +175,13 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
         </DialogActions>
       </Dialog>
     )
-  }, [open])
+  }, [closeDialog, confirmDialog, open])
 
   const backButton = useMemo(() => {
     if (noBackButton) return null
 
     return (
-      <Box mr={3}>
+      <Box sx={{ mr: 3 }}>
         <Button
           disabled={loading}
           variant='contained'
@@ -201,11 +195,11 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
   }, [noBackButton, handleBackAction, loading])
 
   useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && !isEmpty(useFormProps?.formState?.errors)) {
+    if (process.env.NODE_ENV === 'development' && !isEmpty(formState?.errors)) {
       console.log('useFormProps', useFormProps.getValues())
-      console.log('errors in form', useFormProps.formState.errors)
+      console.log('errors in form', formState.errors)
     }
-  }, [useFormProps])
+  }, [formState.errors, useFormProps])
 
   useEffect(() => {
     if (!isEmpty(responseErrors)) {

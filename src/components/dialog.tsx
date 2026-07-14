@@ -1,17 +1,13 @@
-// Libraries
 import React from 'react'
 
-// Material components
-import MaterialDialog, { DialogProps } from '@mui/material/Dialog'
+import CloseIcon from '@mui/icons-material/Close'
+import MaterialDialog from '@mui/material/Dialog'
+import type { DialogProps } from '@mui/material/Dialog'
 import DialogContent from '@mui/material/DialogContent'
 import DialogTitle from '@mui/material/DialogTitle'
 import IconButton from '@mui/material/IconButton'
 
-// Icons
-import CloseIcon from '@mui/icons-material/Close'
-
-// Shared
-import { onlyText } from '../utils/intl'
+import { onlyText } from '../utils/intlHelpers'
 
 interface SharedDialogProps extends DialogProps {
   children: any

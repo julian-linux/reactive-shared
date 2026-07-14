@@ -1,25 +1,13 @@
-import React, { ReactNode, useState, ReactElement, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
+import type { ReactNode, ReactElement } from 'react'
+
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 
-// SnackBar
+import { AppContext, type AppContextProps, type TypeStatus } from './appContextValue'
 import { SnackBar } from '../components/snackBar'
-import { TypeSnackBar } from '../components/sharedTypes'
 
-// import { AxiosResponse } from 'axios'
-
-// Types
-// export type TypeStatus = AxiosResponse<{ type:string, [key:string]: any }> | undefined
-export type TypeStatus = any
-
-export interface AppContextProps {
-  status: TypeStatus
-  setStatus: React.Dispatch<React.SetStateAction<TypeStatus>>
-  snackBarMessage: TypeSnackBar
-  setSnackBarMessage: (arg: TypeSnackBar) => void
-  pageTitle: string
-  setPageTitle: React.Dispatch<React.SetStateAction<string>>
-}
+import type { TypeSnackBar } from '../components/sharedTypes'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,8 +18,6 @@ const queryClient = new QueryClient({
     }
   }
 })
-
-export const AppContext = React.createContext<AppContextProps | undefined>(undefined)
 
 const AppProviderComponent: React.FC<{ children?: ReactNode, debugReactQuery?: boolean }> = ({ children, debugReactQuery = false }): ReactElement => {
   const [status, setStatus] = useState<TypeStatus>()

@@ -1,8 +1,10 @@
-import React, { ReactElement, useEffect } from 'react'
-import InfiniteScroll from 'react-infinite-scroll-component'
+import React, { useEffect } from 'react'
+import type { ReactElement } from 'react'
 
-import Box from '@mui/material/Box'
 import CheckIcon from '@mui/icons-material/Check'
+import Box from '@mui/material/Box'
+
+import InfiniteScroll from 'react-infinite-scroll-component'
 
 import { Loading } from '../../components'
 
@@ -26,17 +28,17 @@ const IScroll: React.FC<InfiniteScrollProps> = ({ page, onNext, items }) => {
   }, [items, page])
 
   return (
-  <InfiniteScroll
-    dataLength={items.length}
-    next={onNext}
-    hasMore={items.length === PAGE_SIZE}
-    loader={<Loading />}
-    endMessage={
-     <Box sx={{ display: 'flex', justifyContent: 'center' }}><CheckIcon color="success" sx={{ fontSize: 40 }}/></Box>
-    }
-  >
-    {allItems}
-  </InfiniteScroll>
+    <InfiniteScroll
+      dataLength={items.length}
+      next={onNext}
+      hasMore={items.length === PAGE_SIZE}
+      loader={<Loading />}
+      endMessage={
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}><CheckIcon color="success" sx={{ fontSize: 40 }} /></Box>
+      }
+    >
+      {allItems}
+    </InfiniteScroll>
   )
 }
 

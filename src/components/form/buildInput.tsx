@@ -1,105 +1,21 @@
-import React, { ReactElement } from 'react'
+import React from 'react'
+import type { ReactElement } from 'react'
 
-import merge from 'lodash/merge'
-import cloneDeep from 'lodash/cloneDeep'
-
-// Material Components
 import Box from '@mui/material/Box'
 import Divider from '@mui/material/Divider'
 
-// Inputs
-import TextField from './textField'
+import Checkbox from './checkbox'
+import DatePicker from './datePicker'
+import DateTimePicker from './datetimePicker'
+import File from './file'
+import NumberFormat from './numberFormat'
 import Radio from './radio'
 import Select from './select'
 import SelectMultiple from './selectMultiple'
-import DatePicker from './datePicker'
-import DateTimePicker from './datetimePicker'
-import NumberFormat from './numberFormat'
-import Checkbox from './checkbox'
 import Switch from './switch'
-import File from './file'
+import TextField from './textField'
 
-import { BuildInputProps } from './sharedTypes'
-
-export const defaultInputProps: BuildInputProps = {
-  renderProps: {
-    field: {
-      onChange: () => { },
-      value: '',
-      onBlur: () => { },
-      ref: () => { },
-      name: ''
-    },
-    fieldState: {
-      error: undefined,
-      invalid: false,
-      isTouched: false,
-      isDirty: false
-    },
-    formState: {
-      isLoading: false,
-      isDirty: false,
-      dirtyFields: {},
-      isSubmitted: false,
-      isSubmitSuccessful: false,
-      submitCount: 0,
-      touchedFields: {},
-      isSubmitting: false,
-      isValidating: false,
-      isValid: true,
-      errors: {}
-    }
-  },
-  inputProps: {
-    type: 'text' as const,
-    name: '',
-    label: ''
-  }
-}
-
-export const defaultProps = ({
-  onChange,
-  value,
-  name,
-  label,
-  type,
-  ...otherProps
-}: {
-  onChange: (value: string) => void,
-  value: number,
-  name: string,
-  label: string,
-  type: string
-} & BuildInputProps) => {
-  const props = merge(
-    cloneDeep(defaultInputProps),
-    {
-      renderProps: {
-        field: {
-          onChange,
-          value,
-          name
-        }
-      }
-    },
-    {
-      inputProps: {
-        ...cloneDeep(defaultInputProps.inputProps),
-        type,
-        label,
-        name,
-        value,
-        size: 'small',
-        sx: {
-          marginTop: '1px'
-        }
-      }
-    },
-    otherProps
-  )
-
-  return { ...props } as BuildInputProps
-}
+import type { BuildInputProps } from './sharedTypes'
 
 const BuildInputComponent: React.FC<BuildInputProps> = (props: BuildInputProps): ReactElement => {
   // React DevTools will automatically show this component's props and state
@@ -107,6 +23,12 @@ const BuildInputComponent: React.FC<BuildInputProps> = (props: BuildInputProps):
   BuildInputComponent.displayName = `BuildInput-${props.inputProps.type}`
 
   switch (props.inputProps.type) {
+    case 'title':
+      return (
+        <Box sx={{ fontWeight: 'bold', fontSize: '1.2rem', marginBottom: '1rem' }}>
+          {typeof props.inputProps.label === 'function' ? props.inputProps.label() : props.inputProps.label}
+        </Box>
+      )
     case 'file':
       return (<File {...props} />)
     case 'checkbox':
