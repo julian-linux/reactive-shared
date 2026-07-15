@@ -3,7 +3,7 @@ import React from 'react'
 import Avatar from '@mui/material/Avatar'
 
 export interface ItemNameProps {
-  image?: string
+  image?: string | undefined
   name: string
 }
 const ItemNameContainer: React.FC<ItemNameProps> = ({ image, name = '' }) => {

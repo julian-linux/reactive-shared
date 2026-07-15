@@ -29,7 +29,7 @@ import { Loading, AppTabs } from '../../components'
 import { onlyText } from '../../utils'
 import { useAppContext } from '../hooks'
 
-import type { SelectedItemProps, DialogOptionsProps } from './defaultDialog'
+import type { DialogOptionsProps } from './defaultDialog'
 
 /**
  * Object of options for show in dialog when a item is selected.
@@ -70,39 +70,36 @@ import type { SelectedItemProps, DialogOptionsProps } from './defaultDialog'
  * filterTabs: array of fns for filter content in each tab. Each tab will
  * use the defined component
  */
-interface TabsProps<T extends SelectedItemProps = SelectedItemProps> {
+export type TabsProps<T> = {
   tabsHeader: string[]
-  filterTabs: Array<(data: T[]) => SelectedItemProps[]>
-}
+  filterTabs: Array<(data: T[]) => T[]>
+} | undefined
 
 interface SearchProps {
   key: string
 }
 
-type ItemComponentProps<T extends SelectedItemProps = SelectedItemProps> =
+type DialogComponentProps<T> = (props: { onClose: () => void, selectedItem: T, title: string, dialogFullScreen: boolean }) => ReactElement
+
+type ItemComponentProps<T> =
   NamedExoticComponent<any>
   | ((props: { item: T, onSelect: () => void, [key: string]: any, onClose: () => void }) => ReactElement)
 
-export interface BuildPageListProps<T extends SelectedItemProps = SelectedItemProps> {
-  // useQuery: (options?: UseQueryOptions) => UseQueryResult
+export interface BuildPageListProps<T> {
   useQuery: any
-  /** add params to request */
-  useQueryParams?: {
+  useQueryParams?: { /** add params to request */
     params: {
       [key: string]: string | number | boolean
     }
   },
   useQueryOptions?: { [key: string]: any }
-  /** URL for ADD page */
-  addRoute?: string
-  /** translation string */
-  addText?: string
-  /** translation string */
-  pageTitle: string
-  dialogOptions?: DialogOptionsProps
+  addRoute?: string /** URL for ADD page */
+  addText?: string /** translation string */
+  pageTitle: string /** translation string */
+  dialogOptions?: DialogOptionsProps<T>
   dialogProps?: { sx?: SxProps }
   dialogFullScreen?: boolean
-  DialogComponent?: (props: { onClose: () => void, selectedItem: SelectedItemProps, title: string, dialogFullScreen: boolean }) => ReactElement
+  DialogComponent?: DialogComponentProps<T>
   loading?: boolean
   ItemComponent: ItemComponentProps<T>
   itemComponentProps?: any
@@ -115,7 +112,7 @@ export interface BuildPageListProps<T extends SelectedItemProps = SelectedItemPr
 }
 
 /** Component for Create Lists with commons functionalities */
-const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>({
+const BuildPageListComponent = <T,>({
   useQuery,
   useQueryParams,
   useQueryOptions = {},
@@ -140,7 +137,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
 
   const [searchParams, setSearchParams] = useState<SearchProps>()
 
-  const [selectedItem, setSelectedItem] = useState<SelectedItemProps | undefined>(undefined)
+  const [selectedItem, setSelectedItem] = useState<T | undefined>(undefined)
 
   const [page, setPage] = useState<number>(1)
 
@@ -156,7 +153,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
 
   const { loading: isLoading, data: queryData, error } = useQuery(queryParams, useQueryOptions)
 
-  const handleSelectItem = useCallback((selectedItem: any) => () => {
+  const handleSelectItem = useCallback((selectedItem: T) => () => {
     if ((dialogOptions != null) || (DialogComponent != null)) {
       setSelectedItem(selectedItem)
     }
@@ -187,13 +184,15 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
   const renderDialog = useMemo(() => {
     if ((selectedItem == null) || (dialogOptions == null)) return null
 
+    const selectedItemName = (selectedItem as { name?: string }).name
+
     if (DialogComponent != null) {
       return (
         <DialogComponent
           dialogFullScreen={dialogFullScreen}
           onClose={handleOnClose}
           selectedItem={selectedItem}
-          title={selectedItem.name ?? onlyText('FORM.LABEL.OPTIONS')}
+          title={selectedItemName ?? onlyText('FORM.LABEL.OPTIONS')}
         />
       )
     }
@@ -206,7 +205,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
           onClose={handleOnClose}
           options={dialogOptions}
           selectedItem={selectedItem}
-          title={selectedItem.name ?? onlyText('FORM.LABEL.OPTIONS')}
+          title={selectedItemName ?? onlyText('FORM.LABEL.OPTIONS')}
         />
       )
     }
@@ -217,7 +216,7 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
 
     const data = sortFunction?.(queryData.data as T[]) ?? queryData.data
 
-    if (tabs != null) {
+    if (tabs !== undefined) {
       const tabsBody = tabs.filterTabs.map((fn, idxTab) => {
         const filteredData = fn(data)
         return (
@@ -305,3 +304,5 @@ const BuildPageListComponent = <T extends SelectedItemProps = SelectedItemProps>
 }
 
 export const BuildPageList = React.memo(BuildPageListComponent) as typeof BuildPageListComponent
+
+export type { DialogOptionProps, DialogOptionsProps } from './defaultDialog'

@@ -26,36 +26,37 @@ module.exports = (env, argv) => {
     resolve: {
       extensions: ['.tsx', '.ts', '.js', '.jsx'],
       alias: {
-        '@': path.resolve(__dirname, 'src')
+        '@': path.resolve(__dirname, 'src'),
+        'process/browser': require.resolve('process/browser.js')
       },
       fallback: {
         "buffer": require.resolve("buffer"),
         "util": require.resolve("util"),
         "stream": require.resolve("stream-browserify"),
         "url": require.resolve("url"),
-        "process": require.resolve("process/browser"),
+        "process": require.resolve("process/browser.js"),
         "stream-http": require.resolve("stream-http")
       },
       fullySpecified: false
     },
     externals: [
       // Function to externalize all MUI and other peer dependencies
-      function({ context, request }, callback) {
+      function ({ context, request }, callback) {
         // Externalize all @mui packages and their subpaths
         if (/^@mui\//.test(request)) {
           return callback(null, 'umd ' + request)
         }
-        
+
         // Externalize emotion packages
         if (/^@emotion\//.test(request)) {
           return callback(null, 'umd ' + request)
         }
-        
+
         // Externalize react packages
         if (/^react($|\/)|^react-dom($|\/)/.test(request)) {
           return callback(null, 'umd ' + request)
         }
-        
+
         // Continue with other externals
         callback()
       },
@@ -73,7 +74,7 @@ module.exports = (env, argv) => {
           amd: 'react-dom',
           root: 'ReactDOM'
         },
-        
+
         // Other libraries
         yup: 'yup',
         lodash: 'lodash',
@@ -118,8 +119,8 @@ module.exports = (env, argv) => {
               loader: 'babel-loader',
               options: {
                 presets: [
-                  ['@babel/preset-env', { 
-                    targets: { 
+                  ['@babel/preset-env', {
+                    targets: {
                       browsers: ['last 2 versions', 'not dead', 'not ie <= 11']
                     }
                   }],
@@ -146,8 +147,8 @@ module.exports = (env, argv) => {
             loader: 'babel-loader',
             options: {
               presets: [
-                ['@babel/preset-env', { 
-                  targets: { 
+                ['@babel/preset-env', {
+                  targets: {
                     browsers: ['last 2 versions', 'not dead', 'not ie <= 11']
                   }
                 }],

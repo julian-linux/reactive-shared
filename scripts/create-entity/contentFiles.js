@@ -6,12 +6,32 @@
  * ENTITY_U: USER
  */
 
+
+const CONFIG_USE_CONTEXT = `
+import { createContext, useContext } from 'react'
+
+import type { HooksProps } from 'reactive-shared'
+
+export const {ENTITY_C}AppContext = React.createContext<HooksProps | undefined>(undefined)
+
+export default (): HooksProps => {
+  const context = useContext({ENTITY_C}AppContext)
+
+  if (context === undefined) {
+    throw new Error('AppContext must be within AppProvider -- in {ENTITY_C}')
+  }
+
+  return context
+}
+`
+
 const CONFIG_CONTEXT = `
-import React, { ReactElement, ReactNode, useContext } from 'react'
+import React from 'react'
+import type { ReactElement, ReactNode } from 'react'
 
-import { useCreateApi, HooksProps } from 'reactive-shared'
+import { useCreateApi } from 'reactive-shared'
 
-const {ENTITY_C}AppContext = React.createContext<HooksProps | undefined>(undefined)
+import { {ENTITY_C}AppContext } from './useContext'
 
 const {ENTITY_C}AppProviderComponent: React.FC<{ children?: ReactNode }> = ({ children }): ReactElement => {
   const api = useCreateApi('{ENTITY_P}')
@@ -21,16 +41,6 @@ const {ENTITY_C}AppProviderComponent: React.FC<{ children?: ReactNode }> = ({ ch
       {children}
     </{ENTITY_C}AppContext.Provider>
   )
-}
-
-export const use{ENTITY_C}AppContext = (): HooksProps => {
-  const context = useContext({ENTITY_C}AppContext)
-
-  if (context === undefined) {
-    throw new Error('AppContext must be within AppProvider -- in {ENTITY_C}')
-  }
-
-  return context
 }
 
 export const {ENTITY_C}AppProvider = React.memo({ENTITY_C}AppProviderComponent)
@@ -97,7 +107,7 @@ import {
 } from 'reactive-shared'
 
 // Context
-import { use{ENTITY_C}AppContext } from 'entities/{ENTITY}/config/context'
+import  use{ENTITY_C}AppContext from 'entities/{ENTITY}/config/useContext'
 
 // Config
 import buildFormProps from './buildFormProps'
@@ -164,7 +174,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import { BuildPageList, Intl, DialogOptionsProps, useAppContext, onlyText } from 'reactive-shared'
 
 // Context
-import { use{ENTITY_C}AppContext } from 'entities/{ENTITY}/config/context'
+import use{ENTITY_C}AppContext from 'entities/{ENTITY}/config/useContext'
 
 // {ENTITY_C}Item
 import {ENTITY_C}Item from 'entities/{ENTITY}/pages/list/item'
@@ -245,6 +255,7 @@ export default React.memo({ENTITY_C}Item)
 `
 
 module.exports = {
+  CONFIG_USE_CONTEXT,
   CONFIG_CONTEXT,
   CONFIG_TYPES,
   PAGES_INDEX,

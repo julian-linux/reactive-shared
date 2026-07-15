@@ -21,41 +21,39 @@ import map from 'lodash/map'
 import { sxCloseDialogButton, sxDialogPrint } from './sx'
 import { Intl } from '../../utils'
 
-export interface SelectedItemProps {
-  id: string | number
-  name: string
-  [key: string]: any
-}
-
-export interface DialogOptionProps {
+export interface DialogOptionProps<T> {
   icon: ReactElement
   text: ReactElement
-  to?: string | ((selectedItem: SelectedItemProps) => void)
-  onConfirm?: (selectedItem: SelectedItemProps) => void
-  Component?: React.ComponentType<{ item: SelectedItemProps, onClose: () => void }>
-  disabled?: boolean | ((selectedItem: SelectedItemProps) => boolean)
-  shouldRender?: (selectedItem: SelectedItemProps) => boolean
-  dialogTitle?: string | ((selectedItem: SelectedItemProps) => string)
+  to?: string | ((selectedItem: T) => void)
+  onConfirm?: (selectedItem: T) => void
+  Component?: React.ComponentType<{ item: T, onClose: () => void }>
+  disabled?: boolean | ((selectedItem: T) => boolean)
+  shouldRender?: (selectedItem: T) => boolean
+  dialogTitle?: string | ((selectedItem: T) => string)
   fullScreen?: boolean,
-  onClick?: (selectedItem: SelectedItemProps) => void
+  onClick?: (selectedItem: T) => void
 }
 
-export interface DialogOptionsProps {
-  [key: string]: DialogOptionProps
+export interface DialogOptionsProps<T> {
+  [key: string]: DialogOptionProps<T>
 }
 
-interface DefaultDialogProps {
+interface DefaultDialogProps<T> {
   title: string
   onClose: () => void
-  options: DialogOptionsProps
-  selectedItem: SelectedItemProps
+  options: DialogOptionsProps<T>
+  selectedItem: T
   dialogFullScreen: boolean
   dialogProps?: { sx?: SxProps }
 }
 
-type HandleClickProps = (options: DialogOptionProps, key: string) => () => void
+type HandleClickProps<T> = (options: DialogOptionProps<T>, key: string) => () => void
 
-const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, onClose, selectedItem, dialogFullScreen, dialogProps }) => {
+const hasId = <T,>(item: T): item is T & { id: string | number } => {
+  return typeof item === 'object' && item !== null && 'id' in item
+}
+
+const DefaultDialogComponent = <T,>({ options, title, onClose, selectedItem, dialogFullScreen, dialogProps }: DefaultDialogProps<T>): ReactElement => {
   const navigate = useNavigate()
   const [showRender, setShowRender] = useState('renderOptionList')
   const [selectedOption, setSelectedOption] = useState('')
@@ -63,10 +61,10 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
 
   const fullScreen = dialogFullScreen || options?.[selectedOption]?.fullScreen || false
 
-  const handleClick = useCallback<HandleClickProps>(({ to, onConfirm, Component }, key) => () => {
+  const handleClick = useCallback<HandleClickProps<T>>(({ to, onConfirm, Component }, key) => () => {
     setSelectedOption(key)
 
-    if (typeof to === 'string' && to !== '') {
+    if (typeof to === 'string' && to !== '' && hasId(selectedItem)) {
       navigate(`${to}/${selectedItem.id}`)
     } else if (typeof to === 'function') {
       to(selectedItem)
@@ -199,4 +197,4 @@ const DefaultDialogComponent: React.FC<DefaultDialogProps> = ({ options, title, 
   )
 }
 
-export default React.memo(DefaultDialogComponent)
+export default React.memo(DefaultDialogComponent) as typeof DefaultDialogComponent

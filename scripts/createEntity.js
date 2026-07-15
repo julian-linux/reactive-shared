@@ -9,6 +9,7 @@ const log = console.log
 const ROOT_DIR = process.cwd()
 
 const FILES = [
+  ['config', 'useContext.tsx'],
   ['config', 'context.tsx'],
   ['config', 'types.ts'],
   ['pages', 'index.tsx'],
@@ -59,8 +60,6 @@ const _createEntity = name => {
       return false
     }
   }
-
-  // console.log('ENTITY_DIR', ENTITY_DIR)
 
   return true
 }
