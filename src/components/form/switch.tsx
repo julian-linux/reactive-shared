@@ -73,7 +73,7 @@ const SharedSwitch: React.FC<BuildInputProps> = ({
   }, [previousValue, value])// eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Box sx={sx}>
+    <Box sx={{ mt: 2, ...sx }}>
       <FormGroup>
         <FormControlLabel
           disabled={disabled}
