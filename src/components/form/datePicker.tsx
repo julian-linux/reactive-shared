@@ -22,7 +22,7 @@ const SharedDatePickerComponent: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(inputProps.value)
 
-  const [value, setValue] = useState(inputProps.value)
+  const [value, setValue] = useState(inputProps.value ?? null)
   const renderLabel = useLabel(label)
 
   const handleChange = useCallback((value: any) => {
@@ -37,7 +37,7 @@ const SharedDatePickerComponent: React.FC<BuildInputProps> = ({
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       field?.onChange?.(value)
-      setValue(value)
+      setValue(value ?? null)
     }
   }, [previousValue, value, field?.onChange, onChange]) // eslint-disable-line react-hooks/exhaustive-deps
 

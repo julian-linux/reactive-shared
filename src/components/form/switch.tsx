@@ -32,7 +32,7 @@ const SharedSwitch: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(value)
 
-  const [checked, setChecked] = useState((field.value !== undefined && field.value) || value || false)
+  const [checked, setChecked] = useState(Boolean(field.value ?? value ?? false))
 
   const handleChange = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
     const { checked } = evt.target
@@ -67,7 +67,7 @@ const SharedSwitch: React.FC<BuildInputProps> = ({
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
-      setChecked(value)
+      setChecked(Boolean(value))
       onChangeField(value)
     }
   }, [previousValue, value])// eslint-disable-line react-hooks/exhaustive-deps

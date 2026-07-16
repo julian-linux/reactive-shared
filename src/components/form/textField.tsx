@@ -31,7 +31,7 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(value)
 
-  const [inputValue, setInputValue] = useState(field.value || value || '')
+  const [inputValue, setInputValue] = useState(field.value ?? value ?? '')
 
   const renderStartAdornment = useMemo(() => {
     if (icon == null) return undefined
@@ -100,7 +100,7 @@ const SharedTextFieldComponent: React.FC<BuildInputProps> = ({
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       field.onChange(value)
-      setInputValue(value)
+      setInputValue(value ?? '')
     }
   }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
 

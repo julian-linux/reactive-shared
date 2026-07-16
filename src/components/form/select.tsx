@@ -56,13 +56,13 @@ export const SharedSelect: React.FC<SelectProps> = ({
     value,
     native = false,
     fullWidth = true,
-    formControlSx = {},
+    sx = {},
     size = 'medium'
   }
 }) => {
   const previousValue = usePreviousValue(value)
 
-  const [inputValue, setInputValue] = useState(field.value || value || '')
+  const [inputValue, setInputValue] = useState(field.value ?? value ?? '')
 
   const handleOnChange = useCallback((evt: SelectChangeEvent) => {
     const { value } = evt.target
@@ -157,18 +157,17 @@ export const SharedSelect: React.FC<SelectProps> = ({
   const renderLabel = useLabel(label)
 
   const defaultSelect = onlyText('FORM.LABEL.DEFAULT_SELECT')
-  const safeFormControlSx = typeof formControlSx === 'object' && formControlSx !== null ? formControlSx : {}
   const safeSize = size === 'small' || size === 'medium' ? size : 'medium'
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       onChangeField(value)
-      setInputValue(value)
+      setInputValue(value ?? '')
     }
   }, [previousValue, value]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <FormControl fullWidth={Boolean(fullWidth)} error={Boolean(error)} required={required} sx={{ mt: 2, ...safeFormControlSx }} size={safeSize}>
+    <FormControl fullWidth={Boolean(fullWidth)} error={Boolean(error)} required={required} sx={{ mt: 2, ...sx }} size={safeSize}>
       <InputLabel sx={{ bgcolor: 'white', px: 1 }} id={`id-select-${renderLabel.toLowerCase()}`}>{renderLabel}</InputLabel>
       <Select
         {...field}

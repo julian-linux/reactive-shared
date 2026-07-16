@@ -21,7 +21,7 @@ const SharedDateTimePicker: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(inputProps.value)
 
-  const [value, setValue] = useState(inputProps.value)
+  const [value, setValue] = useState(inputProps.value ?? null)
 
   const renderLabel = useLabel(label)
 
@@ -33,7 +33,7 @@ const SharedDateTimePicker: React.FC<BuildInputProps> = ({
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       field?.onChange?.(value)
-      setValue(value)
+      setValue(value ?? null)
     }
   }, [previousValue, value, field?.onChange]) // eslint-disable-line react-hooks/exhaustive-deps
 

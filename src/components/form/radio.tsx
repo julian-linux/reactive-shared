@@ -31,7 +31,7 @@ const SharedRadio: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(value)
 
-  const [inputValue, setInputValue] = useState(field.value || value || '')
+  const [inputValue, setInputValue] = useState(field.value ?? value ?? '')
 
   const handleChangeInputValue = useCallback((evt: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = evt.target
@@ -79,7 +79,7 @@ const SharedRadio: React.FC<BuildInputProps> = ({
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
       onChangeField(value)
-      setInputValue(value)
+      setInputValue(value ?? '')
     }
   }, [previousValue, value])// eslint-disable-line react-hooks/exhaustive-deps
 

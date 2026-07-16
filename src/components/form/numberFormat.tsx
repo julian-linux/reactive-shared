@@ -26,7 +26,7 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
 }) => {
   const previousValue = usePreviousValue(value)
   const renderLabel = useLabel(label)
-  const [inputValue, setInputValue] = useState(field.value || value || '')
+  const [inputValue, setInputValue] = useState(field.value ?? value ?? '')
 
   const getHelperText = useMemo(() => {
     if (error != null) {
@@ -39,19 +39,19 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
     }
   }, [error, helpText])
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newValue = event.target.value
+  const handleChange = ({ value }: { value: string }) => {
+    const newValue = value
     setInputValue(newValue)
-    field.onChange(newValue)
+    field.onChange(parseFloat(newValue))
 
     if (typeof onChange === 'function') {
-      onChange(value)
+      onChange(parseFloat(newValue))
     }
   }
 
   useEffect(() => {
     if (!isEqual(previousValue, value)) {
-      field.onChange(value)
+      field.onChange(parseFloat(value))
       setInputValue(value || '')
     }
   }, [previousValue, value])// eslint-disable-line react-hooks/exhaustive-deps
@@ -59,12 +59,12 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
   return (
     <NumericFormat
       value={inputValue}
-      onChange={handleChange}
+      onValueChange={handleChange}
       customInput={TextField}
       thousandSeparator
       valueIsNumericString
       prefix="$"
-      sx={{ width: '100%', mt: 2, ...sxTextField, ...sx }}
+      sx={{ width: '100%', ...sxTextField, ...sx }}
       label={renderLabel}
       helperText={getHelperText}
       error={Boolean(error)}
