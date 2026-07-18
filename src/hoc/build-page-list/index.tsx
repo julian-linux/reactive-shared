@@ -29,6 +29,7 @@ import { Loading, AppTabs } from '../../components'
 import { onlyText } from '../../utils'
 import { useAppContext } from '../hooks'
 
+import type { PreviewProps } from './defaultDialog'
 import type { DialogOptionsProps } from './defaultDialog'
 
 /**
@@ -104,11 +105,12 @@ export interface BuildPageListProps<T> {
   ItemComponent: ItemComponentProps<T>
   itemComponentProps?: any
   tabs?: TabsProps<T>
-  SearchComponent?: any,
-  MiddleComponent?: any,
-  search?: boolean,
+  SearchComponent?: any
+  MiddleComponent?: any
+  search?: boolean
   infiniteScroll?: boolean
   sortFunction?: (data: T[]) => T[]
+  preview?: PreviewProps<T>
 }
 
 /** Component for Create Lists with commons functionalities */
@@ -131,7 +133,8 @@ const BuildPageListComponent = <T,>({
   SearchComponent,
   search = false,
   infiniteScroll = false,
-  sortFunction
+  sortFunction,
+  preview
 }: BuildPageListProps<T>): ReactElement => {
   const { setPageTitle, setSnackBarMessage } = useAppContext()
 
@@ -206,10 +209,11 @@ const BuildPageListComponent = <T,>({
           options={dialogOptions}
           selectedItem={selectedItem}
           title={selectedItemName ?? onlyText('FORM.LABEL.OPTIONS')}
+          preview={preview}
         />
       )
     }
-  }, [selectedItem, dialogOptions, DialogComponent, dialogFullScreen, handleOnClose, dialogProps])
+  }, [selectedItem, dialogOptions, DialogComponent, dialogFullScreen, handleOnClose, dialogProps, preview])
 
   const renderList = useMemo(() => {
     if (queryData === undefined) return []

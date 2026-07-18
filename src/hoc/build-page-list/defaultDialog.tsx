@@ -12,6 +12,12 @@ import List from '@mui/material/List'
 import ListItemAvatar from '@mui/material/ListItemAvatar'
 import ListItemButton from '@mui/material/ListItemButton'
 import ListItemText from '@mui/material/ListItemText'
+import Paper from '@mui/material/Paper'
+import Table from '@mui/material/Table'
+import TableBody from '@mui/material/TableBody'
+import TableCell from '@mui/material/TableCell'
+import TableContainer from '@mui/material/TableContainer'
+import TableRow from '@mui/material/TableRow'
 import type { SxProps, Theme } from '@mui/system'
 
 import { useNavigate } from 'react-router-dom'
@@ -20,6 +26,7 @@ import map from 'lodash/map'
 
 import { sxCloseDialogButton, sxDialogPrint } from './sx'
 import { Intl } from '../../utils'
+import { formatToMoney } from '../../utils/utils'
 
 export interface DialogOptionProps<T> {
   icon: ReactElement
@@ -38,6 +45,8 @@ export interface DialogOptionsProps<T> {
   [key: string]: DialogOptionProps<T>
 }
 
+export type PreviewProps<T> = Record<string, string | ((value: T) => { value: ReactElement, intl: string })> | undefined
+
 interface DefaultDialogProps<T> {
   title: string
   onClose: () => void
@@ -45,6 +54,7 @@ interface DefaultDialogProps<T> {
   selectedItem: T
   dialogFullScreen: boolean
   dialogProps?: { sx?: SxProps }
+  preview?: PreviewProps<T>
 }
 
 type HandleClickProps<T> = (options: DialogOptionProps<T>, key: string) => () => void
@@ -53,7 +63,7 @@ const hasId = <T,>(item: T): item is T & { id: string | number } => {
   return typeof item === 'object' && item !== null && 'id' in item
 }
 
-const DefaultDialogComponent = <T,>({ options, title, onClose, selectedItem, dialogFullScreen, dialogProps }: DefaultDialogProps<T>): ReactElement => {
+const DefaultDialogComponent = <T,>({ options, title, onClose, selectedItem, dialogFullScreen, dialogProps, preview }: DefaultDialogProps<T>): ReactElement => {
   const navigate = useNavigate()
   const [showRender, setShowRender] = useState('renderOptionList')
   const [selectedOption, setSelectedOption] = useState('')
@@ -173,6 +183,43 @@ const DefaultDialogComponent = <T,>({ options, title, onClose, selectedItem, dia
     }
   }, [showRender, renderConfirmBox, renderItemComponent, renderOptionsList])
 
+  const renderPreview = useMemo(() => {
+    if (preview === undefined) return null
+
+    return (
+      <TableContainer component={Paper} sx={{ '@media print': { display: 'none' } }}>
+        <Table size='small'>
+          <TableBody>
+            {Object.entries(preview).map(([key, intl]) => {
+              if (typeof intl === 'function') {
+                const { value, intl: intlKey } = intl(selectedItem)
+                return (
+                  <TableRow key={key}>
+                    <TableCell><Intl langKey={intlKey} sx={{ fontWeight: 'bold', textTransform: 'capitalize' }} /></TableCell>
+                    <TableCell>{value}</TableCell>
+                  </TableRow>
+                )
+              }
+
+              let value = String((selectedItem as Record<string, unknown>)[key] ?? '')
+
+              if (!isNaN(Number(value))) {
+                value = formatToMoney(value)
+              }
+
+              return (
+                <TableRow key={key}>
+                  <TableCell><Intl langKey={intl} sx={{ fontWeight: 'bold', textTransform: 'capitalize' }} /></TableCell>
+                  <TableCell><span>{value}</span></TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    )
+  }, [preview, selectedItem])
+
   return (
     <Dialog
       aria-labelledby='product-dialog'
@@ -190,6 +237,7 @@ const DefaultDialogComponent = <T,>({ options, title, onClose, selectedItem, dia
       </DialogTitle>
 
       <DialogContent sx={{ '@media print': { overflow: 'hidden', margin: '0 !important', padding: '0 !important' } }}>
+        {renderPreview}
         {renderContent}
       </DialogContent>
     </Dialog>

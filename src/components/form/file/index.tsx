@@ -94,7 +94,7 @@ export const SharedUploadFiles = ({
 
   useEffect(() => {
     renderProps?.field?.onChange?.(files)
-  }, [files, renderProps?.field])
+  }, [files]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
