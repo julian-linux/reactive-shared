@@ -181,7 +181,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
     [isSuccess, error, mutateData, id, afterMutate, setSnackBarMessage, defaultSuccessMessage]
   )
 
-  if (options.enabled && id !== '' && (isLoading === true || isEmpty(queryData))) {
+  if (options.enabled && (isLoading === true || isEmpty(queryData))) {
     return <Loading backdrop />
   }
 

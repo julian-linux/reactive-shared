@@ -110,7 +110,7 @@ export interface BuildPageListProps<T> {
   search?: boolean
   infiniteScroll?: boolean
   sortFunction?: (data: T[]) => T[]
-  preview?: PreviewProps<T>
+  preview?: PreviewProps<T> | undefined
 }
 
 /** Component for Create Lists with commons functionalities */
@@ -156,7 +156,7 @@ const BuildPageListComponent = <T,>({
 
   const { loading: isLoading, data: queryData, error } = useQuery(queryParams, useQueryOptions)
 
-  const handleSelectItem = useCallback((selectedItem: T) => () => {
+  const handleSelectItem = useCallback((selectedItem: T) => {
     if ((dialogOptions != null) || (DialogComponent != null)) {
       setSelectedItem(selectedItem)
     }
