@@ -1,11 +1,14 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import type { SxProps, Theme } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
+import type { TextFieldProps } from '@mui/material/TextField'
 
 import { NumericFormat } from 'react-number-format'
 
-export interface BasicNumberFormatProps {
+import { sxTextField } from './form/styles'
+
+export interface BasicNumberFormatProps extends Omit<TextFieldProps, 'onChange' | 'value' | 'defaultValue'> {
   name: string,
   label: string,
   onChange: (value: string) => void,
@@ -13,32 +16,33 @@ export interface BasicNumberFormatProps {
   sx?: SxProps<Theme>
 }
 
-const BasicNumberFormat: React.FC<BasicNumberFormatProps> = ({ name, label, value, onChange, sx }) => {
-  const [inputValue, setValue] = useState(value || '')
-  const handleChange = useCallback((evt: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
-    const { value } = evt.target
+const BasicNumberFormat: React.FC<BasicNumberFormatProps> = ({ name, label, value, onChange, sx, ...props }) => {
+  const [inputValue, setValue] = useState(value ?? '')
+
+  const handleChange = ({ value }: { value: string }) => {
     setValue(value)
     if (typeof onChange === 'function') {
       onChange(value)
     }
-  }, [onChange])
+  }
 
   useEffect(() => {
-    setValue(value || '')
+    setValue(value ?? '')
   }, [value])
 
   return (
     <NumericFormat
       value={inputValue}
-      onChange={handleChange}
+      onValueChange={handleChange}
       customInput={TextField}
       thousandSeparator
       valueIsNumericString
-      prefix="$"
+      prefix="$ "
       variant="standard"
       label={label}
       name={name}
-      sx={sx}
+      sx={{ width: '100%', ...sxTextField, ...sx }}
+      {...(props as Record<string, unknown>)}
     />
 
   )

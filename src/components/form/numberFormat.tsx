@@ -21,7 +21,8 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
     label,
     helpText,
     onChange,
-    value
+    value,
+    showPrefix = true
   }
 }) => {
   const previousValue = usePreviousValue(value)
@@ -63,7 +64,7 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
       customInput={TextField}
       thousandSeparator
       valueIsNumericString
-      prefix="$"
+      prefix={showPrefix ? '$ ' : ''}
       sx={{ width: '100%', ...sxTextField, ...sx }}
       label={renderLabel}
       helperText={getHelperText}
