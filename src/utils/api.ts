@@ -26,15 +26,15 @@ export const initApi = (config: AxiosRequestConfig): void => {
     ({ data }) => data,
     (error) => {
       if (error.message === 'Network Error' || error?.response?.status === 500) {
-        throw new Error('general-error')
+        throw new Error('{"error":"general-error"}')
       }
 
       if (error?.response?.status === 401) {
-        throw new Error('forbidden')
+        throw new Error('{"error":"forbidden"}')
       }
 
       if (error?.response?.status === 400) {
-        throw new Error(error?.response?.data ? JSON.stringify(error.response.data) : 'bad-request')
+        throw new Error(error?.response?.data ? JSON.stringify(error.response.data) : '{"error":"bad-request"}')
         // return error?.response?.data
       }
     }

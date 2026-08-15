@@ -44,6 +44,7 @@ export interface ActionsProps {
   useQueryParams?: AnyParams
   useQueryOptions?: UseQueryOptions
   afterQuery?: AfterQueryActionProps
+  onMutateError?: (error: any) => void
 }
 
 export interface BuildPageFormProps {
@@ -79,7 +80,8 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
     useQuery = () => ({}),
     useQueryParams,
     useQueryOptions = {},
-    afterQuery
+    afterQuery,
+    onMutateError
   }
 }) => {
   const { setPageTitle, setSnackBarMessage } = useAppContext()
@@ -114,11 +116,12 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
   const errors = useMemo(() => {
     if (error) {
       const errors = JSON.parse(error?.message || '{}')
+      onMutateError?.(errors)
       return errors?.errors || {}
     }
 
     return {}
-  }, [error])
+  }, [error, onMutateError])
 
   /** set data for form */
   const formData = useMemo<InputsFormConfigProps>(() => {
@@ -174,11 +177,11 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
       afterMutate(id, mutateData?.data, error)
     }
 
-    if (error instanceof Error) {
+    if (error instanceof Error && typeof onMutateError !== 'function') {
       setSnackBarMessage({ message: onlyText('GENERAL.ERROR'), severity: 'error' })
     }
   },
-    [isSuccess, error, mutateData, id, afterMutate, setSnackBarMessage, defaultSuccessMessage]
+    [isSuccess, error, mutateData, id, afterMutate, setSnackBarMessage, defaultSuccessMessage, onMutateError]
   )
 
   if (options.enabled && (isLoading === true || isEmpty(queryData))) {
