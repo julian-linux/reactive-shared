@@ -67,14 +67,15 @@ const SharedSelectMultiple: React.FC<BuildInputProps> = ({
   }, [onChange, onChangeField])
 
   const renderOptions = useMemo(() => {
-    return normalizedItems.map(({ label, value }: ItemOption) => {
+    return normalizedItems.map(({ label, value, helpText: itemHelpText }: ItemOption) => {
       const checked = inputValue.includes(value)
       const renderLabel = getLabelText(label)
+      const renderHelpText = typeof itemHelpText === 'function' ? itemHelpText() : itemHelpText
 
       return (
-        <MenuItem key={renderLabel} value={value}>
+        <MenuItem key={`${String(value)}-${renderLabel}`} value={value}>
           <Checkbox checked={checked} />
-          <ListItemText primary={renderLabel} />
+          <ListItemText primary={renderLabel} secondary={renderHelpText} sx={{ '& .MuiListItemText-secondary': { color: 'text.secondary', mt: 0.25 } }} />
         </MenuItem>
       )
     })

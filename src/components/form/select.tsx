@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useEffect, useState } from 'react'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText'
 import InputLabel from '@mui/material/InputLabel'
+import ListItemText from '@mui/material/ListItemText'
 import ListSubheader from '@mui/material/ListSubheader'
 import MenuItem from '@mui/material/MenuItem'
 import Select from '@mui/material/Select'
@@ -28,8 +29,9 @@ const isItemOption = (item: any): item is ItemOption => {
   const hasValidLabel = typeof item.label === 'string' || typeof item.label === 'function'
   const hasValidValue = typeof item.value === 'string' || typeof item.value === 'number'
   const hasValidDisabled = item.disabled === undefined || typeof item.disabled === 'boolean'
+  const hasValidHelpText = item.helpText === undefined || typeof item.helpText === 'string' || typeof item.helpText === 'function'
 
-  return hasValidLabel && hasValidValue && hasValidDisabled
+  return hasValidLabel && hasValidValue && hasValidDisabled && hasValidHelpText
 }
 
 const isGroupedItems = (items: any): items is GroupedItems => {
@@ -77,13 +79,21 @@ export const SharedSelect: React.FC<SelectProps> = ({
 
   const renderOptions = useMemo(() => {
     if (Array.isArray(items)) {
-      return items.map(({ label, value, disabled = false }) => {
+      return items.map(({ label, value, disabled = false, helpText: itemHelpText }) => {
         const renderLabel = getLabelText(label)
+        const renderHelpText = typeof itemHelpText === 'function' ? itemHelpText() : itemHelpText
 
         if (native) return <option key={renderLabel} value={value} disabled={disabled}>{renderLabel}</option>
 
         return (
-          <MenuItem key={renderLabel} value={value} disabled={disabled}>{renderLabel}</MenuItem>
+          <MenuItem
+            key={`${String(value)}-${renderLabel}`}
+            value={value}
+            disabled={disabled}
+            sx={{ '& .MuiListItemText-secondary': { color: 'text.secondary', mt: 0.25 } }}
+          >
+            <ListItemText primary={renderLabel} secondary={renderHelpText} />
+          </MenuItem>
         )
       })
     }
@@ -110,11 +120,19 @@ export const SharedSelect: React.FC<SelectProps> = ({
               {groupName}
             </ListSubheader>
           ),
-          ...groupItems.map(({ label, value, disabled = false }) => {
+          ...groupItems.map(({ label, value, disabled = false, helpText: itemHelpText }) => {
             const renderLabel = getLabelText(label)
+            const renderHelpText = typeof itemHelpText === 'function' ? itemHelpText() : itemHelpText
 
             return (
-              <MenuItem key={`${groupName}-${renderLabel}`} value={value} disabled={disabled}>{renderLabel}</MenuItem>
+              <MenuItem
+                key={`${groupName}-${String(value)}-${renderLabel}`}
+                value={value}
+                disabled={disabled}
+                sx={{ '& .MuiListItemText-secondary': { color: 'text.secondary', mt: 0.25 } }}
+              >
+                <ListItemText primary={renderLabel} secondary={renderHelpText} />
+              </MenuItem>
             )
           })
         ]

@@ -14,7 +14,12 @@ type HTMLTypeProps = 'file' | 'checkbox' | 'radio' | 'select' | 'selectMultiple'
 type SharedTypeProps = 'numberFormat' | 'divider' | 'datePicker' | 'dateTimePicker' | 'component' | 'title'
 type TypeProps = HTMLTypeProps | SharedTypeProps
 
-export type ItemOption = { label: string | (() => string), value: string | number, disabled?: boolean }
+export type ItemOption = {
+  label: string | (() => string)
+  value: string | number
+  disabled?: boolean
+  helpText?: string | (() => string)
+}
 export type GroupedItems = { [key: string]: ItemOption[] }
 
 export interface InputProps {

@@ -1,11 +1,13 @@
 import React, { useCallback, useMemo, useEffect, useState } from 'react'
 
+import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import FormHelperText from '@mui/material/FormHelperText'
 import FormLabel from '@mui/material/FormLabel'
 import Radio from '@mui/material/Radio'
 import RadioGroup from '@mui/material/RadioGroup'
+import Typography from '@mui/material/Typography'
 
 import isEqual from 'lodash/isEqual'
 
@@ -48,10 +50,27 @@ const SharedRadio: React.FC<BuildInputProps> = ({
 
     if (!Array.isArray(items)) return null
 
-    return items.map(({ value, label }) => {
+    return items.map(({ value, label, disabled = false, helpText: itemHelpText }) => {
       const renderLabel = getLabelText(label)
+      const renderHelpText = typeof itemHelpText === 'function' ? itemHelpText() : itemHelpText
+
+      const labelNode = renderHelpText ? (
+        <Box component='span' sx={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <Typography component='span' sx={{ lineHeight: 1.5 }}>{renderLabel}</Typography>
+          <Typography component='span' variant='caption' color='text.secondary' sx={{ lineHeight: 1.2 }}>
+            {renderHelpText}
+          </Typography>
+        </Box>
+      ) : renderLabel
+
       return (
-        <FormControlLabel key={renderLabel} value={value} control={<Radio />} label={renderLabel} />
+        <FormControlLabel
+          key={`${String(value)}-${renderLabel}`}
+          value={value}
+          disabled={disabled}
+          control={<Radio />}
+          label={labelNode}
+        />
       )
     })
   }, [items])
