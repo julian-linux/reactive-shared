@@ -32,7 +32,7 @@ const AppRoutesContainer: React.FC<AppRoutesProps> = ({ logo, MainAppProvider, U
       <MainAppProvider>
         {Boolean(logged) && <AppBar mainAppHook={mainAppHook} logo={logo} customItem={customMenuItemComponent} />}
         <Box sx={{ mt: logged ? 7 : 0 }}>
-          {Boolean(logged) && <AppBreadcrumbs routes={routes} />}
+          {Boolean(logged) && <AppBreadcrumbs />}
           <Suspense fallback={<Loading />}>
             <SharedRoutes routes={routes} mainAppHook={mainAppHook} UserEntity={UserEntity} />
           </Suspense>

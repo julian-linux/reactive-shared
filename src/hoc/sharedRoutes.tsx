@@ -10,7 +10,6 @@ const logged = Boolean(getLocalStorageValue('token'))
 export interface RouteProp {
   path: string
   Element: any
-  breadcrumb?: string
   roles?: string[]
   disabled?: boolean | ((status: any)=> boolean)
 }
