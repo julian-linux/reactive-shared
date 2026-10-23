@@ -1,9 +1,9 @@
 // Libraries
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, type ReactElement } from 'react'
 
 // Material Components
 import MenuIcon from '@mui/icons-material/Menu'
-import AppBar from '@mui/material/AppBar'
+import DefaultAppBar from '@mui/material/AppBar'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import Toolbar from '@mui/material/Toolbar'
@@ -21,12 +21,13 @@ import { useAppContext } from '../../hoc/hooks'
 // Styles
 
 // Interfaces
-interface ButtonAppBarProps {
+interface AppBarProps {
   mainAppHook: any
   logo: any
+  customItem: ReactElement | undefined
 }
 
-const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
+const AppBar: React.FC<AppBarProps> = ({ mainAppHook, logo, customItem }) => {
   const [isMenuOpen, setOpenMenu] = useState(false)
   const { pageTitle } = useAppContext()
   const { menuItems } = mainAppHook()
@@ -36,7 +37,7 @@ const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
 
   return (
     <>
-      <AppBar sx={sxAppBar} position='fixed'>
+      <DefaultAppBar sx={sxAppBar} position='fixed'>
         <Toolbar>
           <Button sx={sxLinkHome} type='button' onClick={handleReload}>
             <img src={logo} alt='logo' />
@@ -46,15 +47,17 @@ const ButtonAppBar: React.FC<ButtonAppBarProps> = ({ mainAppHook, logo }) => {
             {pageTitle}
           </Typography>
 
+          {customItem}
+
           <IconButton className='menu-icon-button' aria-label='menu' edge='end' onClick={handleClick}>
             <MenuIcon />
           </IconButton>
         </Toolbar>
-      </AppBar>
+      </DefaultAppBar>
 
       <Menu menuItems={menuItems} onCloseMenu={() => setOpenMenu(false)} isMenuOpen={isMenuOpen} />
     </>
   )
 }
 
-export default React.memo(ButtonAppBar)
+export default React.memo(AppBar)
