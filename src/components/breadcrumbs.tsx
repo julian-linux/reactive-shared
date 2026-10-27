@@ -14,7 +14,7 @@ const breadcrumbSx = {
   mb: 2,
   px: 2,
   py: 1,
-  borderRadius: 2,
+  borderBottom: 'solid 1px',
   '& .MuiBreadcrumbs-ol': {
     alignItems: 'center',
     flexWrap: 'wrap',
@@ -47,10 +47,7 @@ const itemSx = (isCurrent: boolean, disabledLink: boolean) => ({
   px: 1.5,
   py: 0.75,
   borderRadius: 999,
-  border: '1px solid',
-  borderColor: isCurrent ? 'primary.main' : 'divider',
-  bgcolor: isCurrent ? 'primary.main' : disabledLink ? 'action.disabledBackground' : 'background.paper',
-  color: isCurrent ? 'primary.contrastText' : disabledLink ? 'text.disabled' : 'text.secondary',
+  color: disabledLink ? 'text.disabled' : 'text.secondary',
   fontSize: '0.875rem',
   fontWeight: isCurrent ? 600 : 500,
   lineHeight: 1.4,
@@ -73,7 +70,7 @@ const AppBreadcrumbs: React.FC = () => {
   }, [pathname, setBreadcrumbRoutes])
 
   const items = useMemo(() => {
-    if (activeBreadcrumbRoutes !== undefined) {
+    if (activeBreadcrumbRoutes !== undefined && activeBreadcrumbRoutes.length > 0) {
       return activeBreadcrumbRoutes.map(({ path, label, disabledLink = false }, index) => ({
         path,
         label,
