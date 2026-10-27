@@ -21,7 +21,7 @@ const breadcrumbSx = {
     gap: 0.5
   },
   '& .MuiBreadcrumbs-separator': {
-    mx: 0.25,
+    mx: 0,
     color: 'text.disabled',
     display: 'flex'
   }
@@ -44,7 +44,7 @@ const linkSx = {
 const itemSx = (isCurrent: boolean, disabledLink: boolean) => ({
   display: 'inline-flex',
   alignItems: 'center',
-  px: 1.5,
+  px: 0.5,
   py: 0.75,
   borderRadius: 999,
   color: disabledLink ? 'text.disabled' : 'text.secondary',
