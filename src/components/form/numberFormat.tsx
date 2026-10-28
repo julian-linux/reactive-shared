@@ -22,7 +22,8 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
     helpText,
     onChange,
     value,
-    showPrefix = true
+    showPrefix = true,
+    disabled = false
   }
 }) => {
   const previousValue = usePreviousValue(value)
@@ -69,6 +70,7 @@ const SharedNumberFormatComponent: React.FC<BuildInputProps> = ({
       label={renderLabel}
       helperText={getHelperText}
       error={Boolean(error)}
+      disabled={disabled}
     />
   )
 }

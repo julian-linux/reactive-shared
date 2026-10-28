@@ -11,9 +11,10 @@ import { useAppContext } from '../hoc/hooks'
 import { Intl } from '../utils'
 
 const breadcrumbSx = {
-  mb: 2,
+  mb: 0,
   px: 2,
-  py: 1,
+  pt: 1,
+  pb: 0,
   borderBottom: 'solid 1px',
   '& .MuiBreadcrumbs-ol': {
     alignItems: 'center',

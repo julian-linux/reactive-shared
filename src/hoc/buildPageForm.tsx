@@ -190,7 +190,7 @@ const BuildPageFormContainer: React.FC<BuildPageFormProps> = ({
 
   return (
     <Paper>
-      <Box sx={{ mt: 2, p: 2 }}>
+      <Box sx={{ p: 2, pt: 0 }}>
         <CreateForm
           loading={adding}
           disabled={disabled}
