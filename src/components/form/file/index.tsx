@@ -201,6 +201,7 @@ export const SharedUploadFiles = ({
                       src={failedImages.includes(url) ? undefined : url}
                       alt={`Uploaded image ${index + 1}`}
                       variant="square"
+                      slotProps={{ img: { loading: 'lazy' } }}
                       onClick={() => !failedImages.includes(url) && setPreviewImage(url)}
                       onError={() => setFailedImages(prev => prev.includes(url) ? prev : [...prev, url])}
                       sx={{
@@ -257,6 +258,7 @@ export const SharedUploadFiles = ({
             component="img"
             src={previewImage}
             alt="Full screen image preview"
+            loading="eager"
             sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
           />
         )}

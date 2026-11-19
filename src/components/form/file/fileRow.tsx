@@ -1,3 +1,5 @@
+import { useEffect, useRef, useState } from 'react'
+
 import Button from '@mui/material/Button'
 import ListItem from '@mui/material/ListItem'
 import Typography from '@mui/material/Typography'
@@ -28,13 +30,32 @@ interface FileRowProps {
 
 const FileRow = ({ file }: FileRowProps) => {
   const isImage = isImageType(file.content_type)
+  const imageContainerRef = useRef<HTMLDivElement>(null)
+  const [shouldLoadImage, setShouldLoadImage] = useState(Boolean(file.url) || !isImage)
+
+  useEffect(() => {
+    if (!isImage || file.url || shouldLoadImage) return
+
+    const container = imageContainerRef.current
+    if (!container) return
+
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry?.isIntersecting) {
+        setShouldLoadImage(true)
+        observer.disconnect()
+      }
+    }, { rootMargin: '100px' })
+
+    observer.observe(container)
+    return () => observer.disconnect()
+  }, [file.url, isImage, shouldLoadImage])
 
   const { data: imageUrl, isLoading } = useQuery({
     queryKey: [file.type, file.id],
     queryFn: () => fetchImageBlob(file),
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24,
-    enabled: isImage && !file.url
+    enabled: isImage && !file.url && shouldLoadImage
   })
 
   const imageSource = file.url || imageUrl || ''
@@ -77,7 +98,7 @@ const FileRow = ({ file }: FileRowProps) => {
 
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
-      <Box sx={{ mr: 1 }}>
+      <Box ref={imageContainerRef} sx={{ mr: 1 }}>
         <FileAvatar file={file} imageUrl={imageSource} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>

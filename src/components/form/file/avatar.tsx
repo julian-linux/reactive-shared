@@ -51,9 +51,7 @@ const FileAvatar = ({ file, imageUrl }: FileAvatarProps) => {
 
   if (isImage && blobUrl) {
     return (
-      <>
-        <Avatar src={blobUrl} alt={file.name} variant="square" />
-      </>
+      <Avatar src={blobUrl} alt={file.name} variant="square" slotProps={{ img: { loading: 'lazy' } }} />
     )
   }
 
