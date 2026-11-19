@@ -4,4 +4,5 @@ export type FileProp = {
   size: number
   content_type: string
   type: string
+  url?: string
 }

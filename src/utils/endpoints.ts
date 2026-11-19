@@ -63,12 +63,89 @@ type UseCreateApiProps = (endpoint: string, additionalEndpoints?: AdditionalEndp
 
 type UseCustomQueryProps = (name: string, endpoint: string) => (queryParams: { id?: string, params?: ObjectStringProps }, options: ObjectStringProps) => any
 
-type UseCustomMutateProps = (endpoint: string) => (id: string | null, options: UseMutateOptionsProps & { params?: ObjectStringProps }, config?: ObjectStringProps) => any
+type UseCustomMutateProps = (
+  endpoint: string,
+  type: AdditionalEndpointsProps['type']
+) => (id: string | null, options: UseMutateOptionsProps & { params?: ObjectStringProps }, config?: ObjectStringProps) => any
 
 type OnSuccessMutateProps = (client: QueryClient, queries: string[][]) => (data: ApiResponse) => void
 
+const isBlob = (value: unknown): value is Blob => {
+  return typeof Blob !== 'undefined' && value instanceof Blob
+}
+
+const containsBlob = (value: unknown): boolean => {
+  if (isBlob(value)) return true
+  if (Array.isArray(value)) return value.some(containsBlob)
+  if (value !== null && typeof value === 'object') {
+    return Object.values(value).some(containsBlob)
+  }
+  return false
+}
+
+const appendFormDataValue = (formData: FormData, key: string, value: unknown): void => {
+  if (value === undefined) return
+  if (value === null) {
+    formData.append(key, 'null')
+    return
+  }
+
+  if (isBlob(value)) {
+    formData.append(key, value)
+    return
+  }
+
+  if (Array.isArray(value)) {
+    if (value.some(containsBlob)) {
+      value.forEach(item => appendFormDataValue(formData, key, item))
+    } else {
+      formData.append(key, JSON.stringify(value))
+    }
+    return
+  }
+
+  if (typeof value === 'object') {
+    if (containsBlob(value)) {
+      Object.entries(value).forEach(([childKey, childValue]) => {
+        appendFormDataValue(formData, `${key}[${childKey}]`, childValue)
+      })
+    } else {
+      formData.append(key, JSON.stringify(value))
+    }
+    return
+  }
+
+  formData.append(key, String(value))
+}
+
+const toMultipartFormData = (params: ParamsProps): FormData => {
+  const formData = new FormData()
+  Object.entries(params).forEach(([key, value]) => appendFormDataValue(formData, key, value))
+  return formData
+}
+
 // #endregion
 
+/**
+ * Returns a callback that invalidates the supplied React Query cache keys.
+ *
+ * Call the returned function after a change that makes the cached data stale.
+ * React Query can then refetch matching active queries. Each query key is
+ * represented as an array, matching the `queryKey` format used by
+ * `useQuery`.
+ *
+ * @param queries Query keys to invalidate, for example `[['users'], ['posts', 'recent']]`.
+ * @returns A callback that invalidates all supplied query keys.
+ *
+ * @example
+ * ```tsx
+ * const invalidateQueries = useInvalidateQueries([['users']])
+ *
+ * const handleUserSaved = () => {
+ *   invalidateQueries()
+ * }
+ * ```
+ */
 export const useInvalidateQueries = (queries: string[][]) => {
   const client = useQueryClient()
 
@@ -106,7 +183,7 @@ const useCustomQuery: UseCustomQueryProps = (name, endpoint) => (queryParams = {
   return useReactQuery<ApiResponse>({ queryKey: [name, endpoint], queryFn: () => api.get(endpoint, { params }), ...options })
 }
 
-const useCustomMutation: UseCustomMutateProps = (endpoint) => (id: string | null, options = {}) => {
+const useCustomMutation: UseCustomMutateProps = (endpoint, type) => (id: string | null, options = {}) => {
   if (endpoint.includes('{id}') && !id) {
     throw new Error(`Endpoint ${endpoint} requires an id in hook implementation, but id is null`)
   }
@@ -116,24 +193,34 @@ const useCustomMutation: UseCustomMutateProps = (endpoint) => (id: string | null
   const onSuccessMutation = onSuccessMutate(useQueryClient(), [[endpoint], ...refetchQueries])
 
   return useMutation<ApiResponse, Error, ParamsProps & { formData?: FormData }>({
-    mutationFn: (formData: ParamsProps & { formData?: FormData }) => {
-      let data = formData
+    mutationFn: (params: ParamsProps & { formData?: FormData }) => {
+      let data: ParamsProps | FormData = params
       let paramsOptions = {}
-      if (formData?.formData) {
-        data = formData.formData
-        const { formData: _, ...rest } = formData
+      if (params?.formData) {
+        data = params.formData
+        const { formData: _, ...rest } = params
         paramsOptions = rest
+      } else if (containsBlob(params)) {
+        data = toMultipartFormData(params)
       }
 
+      let requestEndpoint = endpoint
       if (id) {
-        if (endpoint.includes('{id}')) {
-          const newEndpoint = endpoint.replace('{id}', id)
-          return api.put(newEndpoint, data, paramsOptions)
-        }
-
-        return api.put(`${endpoint}/${id}`, data, paramsOptions)
+        requestEndpoint = endpoint.includes('{id}')
+          ? endpoint.replace('{id}', id)
+          : `${endpoint}/${id}`
       }
-      return api.post(endpoint, data, paramsOptions)
+
+      switch (type) {
+        case 'POST':
+          return api.post(requestEndpoint, data, paramsOptions)
+        case 'PUT':
+          return api.put(requestEndpoint, data, paramsOptions)
+        case 'DELETE':
+          return api.delete(requestEndpoint, { ...paramsOptions, data })
+        default:
+          throw new Error(`Unsupported mutation request type: ${type}`)
+      }
     },
     onSuccess: (data) => {
       onSuccessMutation(data)
@@ -151,7 +238,7 @@ const useSetAdditionalEndpoints: UseSetAdditionalEndpointsProps = ({ hooks, addi
     if (type === 'GET') {
       hooks[`use${upperFirst(name)}`] = useCustomQuery(name, endpoint)
     } else {
-      hooks[`use${upperFirst(name)}`] = useCustomMutation(endpoint)
+      hooks[`use${upperFirst(name)}`] = useCustomMutation(endpoint, type)
     }
   })
 }
@@ -199,19 +286,26 @@ export const useCreateApi: UseCreateApiProps = (endpoint: string, additionalEndp
   const entity = capitalize(endpoint)
 
   const useMutate: UseMutateProps = (id = null, options = {}) => {
+    // console.log('useMutate called with id:', id, 'and options:', options) // Debugging line
     const { refetchQueries = [] } = options
     const onSuccess = onSuccessMutate(client, [[endpoint], ...refetchQueries])
 
     if (id) {
       return useMutation<ApiResponse, Error, ParamsProps>({
-        mutationFn: (params: ParamsProps) => api.put(`${endpoint}/${id}`, params),
+        mutationFn: (params: ParamsProps) => api.put(
+          `${endpoint}/${id}`,
+          containsBlob(params) ? toMultipartFormData(params) : params
+        ),
         onSuccess,
         ...options
       })
     }
 
     return useMutation<ApiResponse, Error, ParamsProps>({
-      mutationFn: (params: ParamsProps) => api.post(endpoint, params),
+      mutationFn: (params: ParamsProps) => api.post(
+        endpoint,
+        containsBlob(params) ? toMultipartFormData(params) : params
+      ),
       onSuccess,
       ...options
     })

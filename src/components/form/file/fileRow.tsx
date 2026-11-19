@@ -34,8 +34,10 @@ const FileRow = ({ file }: FileRowProps) => {
     queryFn: () => fetchImageBlob(file),
     staleTime: 1000 * 60 * 60 * 24,
     gcTime: 1000 * 60 * 60 * 24,
-    enabled: isImage
+    enabled: isImage && !file.url
   })
+
+  const imageSource = file.url || imageUrl || ''
 
   const { mutateAsync: getFile } = useMutation({
     mutationFn: () => api.get(`files/file/${file.id}`)
@@ -45,7 +47,7 @@ const FileRow = ({ file }: FileRowProps) => {
     const link = document.createElement('a')
     link.download = file.name
     if (isImage) {
-      link.href = imageUrl || ''
+      link.href = imageSource
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -76,7 +78,7 @@ const FileRow = ({ file }: FileRowProps) => {
   return (
     <ListItem sx={{ display: 'flex', alignItems: 'center' }}>
       <Box sx={{ mr: 1 }}>
-        <FileAvatar file={file} imageUrl={imageUrl || ''} />
+        <FileAvatar file={file} imageUrl={imageSource} />
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
         <Button onClick={handleDownloadFile}>
