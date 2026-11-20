@@ -34,12 +34,48 @@ const isItemOption = (item: any): item is ItemOption => {
   return hasValidLabel && hasValidValue && hasValidDisabled && hasValidHelpText
 }
 
+// A grouped collection must be an object of option arrays. This check lets
+// the component distinguish grouped data from a flat option array.
 const isGroupedItems = (items: any): items is GroupedItems => {
   if (items == null || typeof items !== 'object' || Array.isArray(items)) return false
 
   return Object.values(items).every((group) => Array.isArray(group) && group.every(isItemOption))
 }
 
+/**
+ * A single-select form control. Supply `inputProps.items` as either a flat
+ * array of options or an object whose keys are group headings and whose
+ * values are arrays of options.
+ *
+ * Flat options:
+ * ```tsx
+ * items: [
+ *   { label: 'Red', value: 'red' },
+ *   { label: 'Blue', value: 'blue', disabled: true }
+ * ]
+ * ```
+ *
+ * Grouped options render the object keys as headings, in insertion order:
+ * ```tsx
+ * items: {
+ *   'Warm colors': [
+ *     { label: 'Red', value: 'red' },
+ *     { label: 'Orange', value: 'orange' }
+ *   ],
+ *   'Cool colors': [
+ *     { label: 'Blue', value: 'blue' },
+ *     { label: 'Green', value: 'green' }
+ *   ]
+ * }
+ * ```
+ *
+ * Each option needs a string or number `value` and a string or zero-argument
+ * function `label`. `disabled` and `helpText` are optional. Function labels
+ * and help text are called when options render. The selected value is stored
+ * in the form field, and `onChange(value)` is called when it changes.
+ * Grouped items use MUI menu headers and items, so grouping is for the
+ * default (`native: false`) select; use a flat array with `native: true`.
+ */
 export const SharedSelect: React.FC<SelectProps> = ({
   renderProps: {
     field: {

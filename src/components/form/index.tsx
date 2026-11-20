@@ -107,7 +107,11 @@ const CreateFormContainer: React.FC<BuildFormProps> = ({
   const handleOnSubmit = useCallback((evt: React.SyntheticEvent) => {
     evt.preventDefault()
     evt.stopPropagation()
-    return handleSubmit(onSubmit!)(evt)
+    return handleSubmit(onSubmit!, (errors) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Yup validation errors:', errors)
+      }
+    })(evt)
   }, [handleSubmit, onSubmit])
 
   const buildForm = useMemo(() => {
